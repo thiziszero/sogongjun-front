@@ -139,27 +139,39 @@ const FairPresentation = (props: FairPresentationProps) => (
           <Box display="flex" overflowX="scroll" p={2}>
             {props.popularNFTs.map((nft) => (
               <Box
-                key={nft.keyword}
-                borderWidth={1}
-                borderRadius="lg"
-                overflow="hidden"
-                cursor="pointer"
-                mr={4}
-                minW="250px"
-                onClick={() => props.onPopularNftClick(nft)}
-              >
-                <Image src={nft.nftDetails.image} alt={nft.keyword} />
-                <VStack p={4} align="start">
-                  <Text fontWeight="bold" noOfLines={2}>
-                    {nft.keyword}
-                  </Text>
-                  <Text>학년: {nft.nftDetails.grade}</Text>
-                  <Text>국적: {nft.nftDetails.nationality}</Text>
-                  <Text fontSize="sm" color="gray.500">
-                    Keyword: {nft.keyword}
-                  </Text>
-                </VStack>
-              </Box>
+              key={nft.keyword}
+              borderWidth={1}
+              borderRadius="lg"
+              overflow="hidden"
+              cursor="pointer"
+              mr={4}
+              minW="250px"
+              onClick={() => props.onPopularNftClick(nft)}
+              maxW="500px"  // 최대 너비 설정
+            >
+              <Image
+                src={nft.nftDetails.image}
+                alt={nft.keyword}
+                objectFit="cover"  // 이미지가 잘리도록 설정
+                w="100%"  // 이미지 너비 100%로 설정
+                h="300px"  // 이미지 높이 설정
+              />
+              <Box borderTopWidth="1px" borderTopColor="gray.200" mt={2} />
+              <VStack p={4} align="start">
+                <Text fontWeight="bold" noOfLines={2} textAlign="left">
+                  {nft.keyword}
+                </Text>
+                <Text fontSize="sm" color="gray.500">
+                  학년: {nft.nftDetails.grade}
+                </Text>
+                <Text fontSize="sm" color="gray.500">
+                  국적: {nft.nftDetails.nationality}
+                </Text>
+                <Text fontSize="sm" color="gray.500">
+                  Keyword: {nft.keyword}
+                </Text>
+              </VStack>
+            </Box>
             ))}
           </Box>
         </Box>
@@ -185,25 +197,38 @@ const FairPresentation = (props: FairPresentationProps) => (
       <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6}>
         {props.nfts.map((nft) => (
           <Box
-            key={nft.tokenId}
-            borderWidth={1}
-            borderRadius="lg"
-            overflow="hidden"
-            cursor="pointer"
-            onClick={() => props.onNftClick(nft)}
-          >
-            <Image src={nft.imageUrl} alt={nft.questionContent} />
-            <VStack p={4} align="start">
-              <Text fontWeight="bold" noOfLines={2}>
-                {nft.questionContent}
-              </Text>
-              <Text>학년: {nft.grade}</Text>
-              <Text>국적: {nft.nationality}</Text>
-              <Text fontSize="sm" color="gray.500">
-                Token ID: {nft.tokenId}
-              </Text>
-            </VStack>
+          key={nft.tokenId}
+          borderWidth={1}
+          borderRadius="lg"
+          overflow="hidden"
+          cursor="pointer"
+          onClick={() => props.onNftClick(nft)}
+          maxW="250px"  // 최대 너비 설정
+          maxH="500px"  // 최대 높이 설정
+        >
+          <Image
+            src={nft.imageUrl}
+            alt={nft.questionContent}
+            objectFit="cover"  // 이미지가 잘리도록 설정
+            w="100%"  // 이미지 너비 100%로 설정
+            h="300px"  // 이미지 높이 설정
+          />
+          <Box borderTopWidth="1px" borderTopColor="gray.200" mt={2} />
+          <Box p={4}>
+            <Text fontWeight="bold" noOfLines={2} textAlign="left">
+              {nft.questionContent}
+            </Text>
+            <Text fontSize="sm" color="gray.500">
+              학년: {nft.grade}
+            </Text>
+            <Text fontSize="sm" color="gray.500">
+              국적: {nft.nationality}
+            </Text>
+            <Text fontSize="sm" color="gray.500">
+              Token ID: {nft.tokenId}
+            </Text>
           </Box>
+        </Box>
         ))}
       </Grid>
 

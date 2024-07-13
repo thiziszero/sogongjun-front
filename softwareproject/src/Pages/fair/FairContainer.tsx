@@ -94,7 +94,7 @@ const FairContainer: React.FC = () => {
             grade: 12,
             questionContent: "hello im jaebin thanks to study hard",
             answerContent: "can you filter my answer keyword?",
-            image: "https://i.seadn.io/s/raw/files/c1abbfabee42bc2a146a79b807accb86.webp?w=500&auto=format",
+            image: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi2.tcafe2a.com%2F240505%2F2552fcd4d34bc4f05bce31c782f87e14_1714912750_8708.gif&type=sc960_832_gif",
           },
         },
         {
@@ -105,7 +105,7 @@ const FairContainer: React.FC = () => {
             grade: 12,
             questionContent: "hello im jaebin thanks to study hard",
             answerContent: "can you filter my answer keyword?",
-            image: "https://i.seadn.io/s/raw/files/c1abbfabee42bc2a146a79b807accb86.webp?w=500&auto=format",
+            image: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi.namu.wiki%2Fi%2FgeGngQMnvmK2g3wuKU4O1uNs8Ix1HXQULk9PrnT57lHOlU4AxL9qsNCYXOOY9DIqPWtXnphq8G6NzCcvzv-ppQ.webp&type=sc960_832",
           },
         },
       ];
