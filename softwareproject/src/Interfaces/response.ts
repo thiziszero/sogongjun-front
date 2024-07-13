@@ -54,3 +54,20 @@ export interface NFTListResponse {
         imageUrl: string;
     }>;
 }
+
+// Popular NFT 목록 조회 응답
+export interface PopularNFTResponse {
+    data: NFTData[];
+}
+
+export interface NFTData {
+    count: number;
+    keyword: string;
+    nftDetails: {
+        answerContent: string;
+        grade: number;
+        image: string;
+        nationality: string;
+        questionContent: string;
+    };
+}

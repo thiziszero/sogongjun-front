@@ -7,12 +7,10 @@ import { nftApi, questionApi, userApi } from "../../Apis/apis";
 import {
   QuestionRequest,
   CreateNFTRequest,
-  LoginRequest,
 } from "../../Interfaces/request";
 import {
   QuestionResponse,
   CreateNFTResponse,
-  LoginResponse,
   NFTListResponse
 } from "../../Interfaces/response";
 
@@ -76,17 +74,7 @@ const HomeContainer: React.FC = () => {
     // 예: 토큰 제거, 서버에 로그아웃 요청 등
   };
 
-  const onClickFair = async () => {
-      try {
-        const response = await nftApi.getNFTList();
-        console.log(response);
-        setNfts(response.data.nfts);
-        setIsLoading(false);
-      } catch (err) {
-        console.log("실패");
-        setError("NFT 목록을 불러오는 데 실패했습니다.");
-        setIsLoading(false);
-      }
+  const onClickFair = () => {
     navigate("/fair");
   };
 

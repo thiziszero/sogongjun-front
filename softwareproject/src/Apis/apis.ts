@@ -14,7 +14,8 @@ import {
   AnswerToImageResponse,
   CreateNFTResponse,
   NFTDetailResponse,
-  NFTListResponse
+  NFTListResponse,
+  PopularNFTResponse
 } from "../Interfaces/response";
 
 // Axios 인스턴스 생성
@@ -77,4 +78,8 @@ export const nftApi = {
   getNFTList: async (): Promise<AxiosResponse<NFTListResponse>> => {
     return api.get(`/api/questions/nfts`);
   },
+
+  getNFTPopularList: async (): Promise<AxiosResponse<PopularNFTResponse>> => {
+    return api.get(`/api/top3-nft`);
+  }
 };

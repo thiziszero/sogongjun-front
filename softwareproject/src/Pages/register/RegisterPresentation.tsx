@@ -26,13 +26,13 @@ interface RegisterPresentationProps {
 
 const RegisterPresentation: React.FC<RegisterPresentationProps> = (props) => {
   const nationalities = [
-    "미국",
-    "영국",
-    "베트남",
-    "대한민국",
-    "일본",
-    "중국",
-    "러시아",
+    "United States of America(USA)",
+    "United Kingdom(UK)",
+    "Vietnam",
+    "South Korea",
+    "Japan",
+    "China",
+    "Russia",
   ];
 
   return (
@@ -91,13 +91,24 @@ const RegisterPresentation: React.FC<RegisterPresentationProps> = (props) => {
                     </option>
                   ))}
                 </Select>
-                <Input
+                <Select
                   placeholder="학년"
                   size="md"
-                  type="number"
-                  value={props.grade || ""}
                   onChange={(e) => props.setGrade(Number(e.target.value))}
-                />
+                >
+                  <option value='1'>1</option>
+                  <option value='2'>2</option>
+                  <option value='3'>3</option>
+                  <option value='4'>4</option>
+                  <option value='5'>5</option>
+                  <option value='6'>6</option>
+                  <option value='7'>7</option>
+                  <option value='8'>8</option>
+                  <option value='9'>9</option>
+                  <option value='10'>10</option>
+                  <option value='11'>11</option>
+                  <option value='12'>12</option>
+                </Select>
                 <Button onClick={props.onRegister}>등록하기</Button>
               </Stack>
             </Box>

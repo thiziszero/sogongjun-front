@@ -1,26 +1,117 @@
 import React, { useState, useEffect } from "react";
-import { nftApi } from "../../Apis/apis";
 import FairPresentation from "./FairPresentation";
-import { NFTListResponse } from "../../Interfaces/response";
+import { useNavigate } from "react-router-dom";
+import { useDisclosure } from "@chakra-ui/react";
+import { useAppContext } from "../../AppContext";
+import { nftApi, userApi } from "../../Apis/apis";
+import {
+  NFTListResponse,
+  NFTData,
+} from "../../Interfaces/response";
 
 const FairContainer: React.FC = () => {
+  const navigate = useNavigate();
+  const { isLoggedIn, setIsLoggedIn } = useAppContext();
   const [nfts, setNfts] = useState<NFTListResponse["nfts"]>([]);
+  const [popularNFTs, setPopularNFTs] = useState<NFTData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedNft, setSelectedNft] = useState<
-    NFTListResponse["nfts"][0] | null
-  >(null);
+  const [selectedNft, setSelectedNft] = useState<NFTListResponse["nfts"][0] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPopularNft, setSelectedPopularNft] = useState<NFTData | null>(null);
+
+  const {
+    isOpen: isLoginModalOpen,
+    onOpen: onLoginModalOpen,
+    onClose: onLoginModalClose,
+  } = useDisclosure();
+  const [id, setId] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loginError, setLoginError] = useState<string>("");
 
   useEffect(() => {
     fetchNFTs();
   }, []);
 
   const fetchNFTs = async () => {
-    try {
-      const response = await nftApi.getNFTList();
-      console.log(response);
+    /*const response = await nftApi.getNFTList();
+      const popular_response = await nftApi.getNFTPopularList();
+      console.log("Popular NFTs:", popular_response.data);
       setNfts(response.data.nfts);
+      // 수정된 부분: popular_response.data가 배열인 경우를 처리
+      setPopularNFTs(Array.isArray(popular_response.data) ? popular_response.data : []);*/
+    try {
+      // Fetch the data from your API or use dummy data
+      const dummyData = {
+        nfts: [
+          {
+            tokenId: "11",
+            metadataUrl: "ipfs://QmbGqrc3Fg8dKkSbrvDV3ahqyxzbDjbr3gmBDn8gDSm63N",
+            questionContent: "ming3",
+            answerContent: "ting",
+            nationality: "South Korea",
+            grade: "11",
+            imageUrl: "https://i.seadn.io/s/raw/files/c1abbfabee42bc2a146a79b807accb86.webp?w=500&auto=format",
+          },
+          {
+            tokenId: "10",
+            metadataUrl: "ipfs://QmeMfGGHgY2ANg4UXm9gcuGRShiHiFDsGVUx5Hg9BtJN1X",
+            questionContent: "React hard",
+            answerContent: "ting",
+            nationality: "South Korea",
+            grade: "8",
+            imageUrl: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi2.tcafe2a.com%2F240505%2F2552fcd4d34bc4f05bce31c782f87e14_1714912750_8708.gif&type=sc960_832_gif",
+          },
+          {
+            tokenId: "8",
+            metadataUrl: "ipfs://QmeMfGGHgY2ANg4UXm9gcuGRShiHiFDsGVUx5Hg9BtJN1X",
+            questionContent: "Help",
+            answerContent: "ting",
+            nationality: "South Korea",
+            grade: "1",
+            imageUrl: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi.namu.wiki%2Fi%2FgeGngQMnvmK2g3wuKU4O1uNs8Ix1HXQULk9PrnT57lHOlU4AxL9qsNCYXOOY9DIqPWtXnphq8G6NzCcvzv-ppQ.webp&type=sc960_832",
+          },
+        ],
+      };
+
+      const dummyData_pop: NFTData[] = [
+        {
+          keyword: "jaebin",
+          count: 7,
+          nftDetails: {
+            nationality: "southkorea",
+            grade: 12,
+            questionContent: "hello im jaebin thanks to study hard",
+            answerContent: "can you filter my answer keyword?",
+            image: "https://i.seadn.io/s/raw/files/c1abbfabee42bc2a146a79b807accb86.webp?w=500&auto=format",
+          },
+        },
+        {
+          keyword: "hello",
+          count: 5,
+          nftDetails: {
+            nationality: "southkorea",
+            grade: 12,
+            questionContent: "hello im jaebin thanks to study hard",
+            answerContent: "can you filter my answer keyword?",
+            image: "https://i.seadn.io/s/raw/files/c1abbfabee42bc2a146a79b807accb86.webp?w=500&auto=format",
+          },
+        },
+        {
+          keyword: "im",
+          count: 4,
+          nftDetails: {
+            nationality: "southkorea",
+            grade: 12,
+            questionContent: "hello im jaebin thanks to study hard",
+            answerContent: "can you filter my answer keyword?",
+            image: "https://i.seadn.io/s/raw/files/c1abbfabee42bc2a146a79b807accb86.webp?w=500&auto=format",
+          },
+        },
+      ];
+
+      setNfts(dummyData.nfts);
+      setPopularNFTs(dummyData_pop);
       setIsLoading(false);
     } catch (err) {
       setError("NFT 목록을 불러오는 데 실패했습니다.");
@@ -38,15 +129,78 @@ const FairContainer: React.FC = () => {
     setSelectedNft(null);
   };
 
+  const handlePopularNftClick = (nft: NFTData) => {
+    setSelectedPopularNft(nft);
+  };
+
+  const handleClosePopularNftModal = () => {
+    setSelectedPopularNft(null);
+  };
+
+  const onBack = () => {
+    navigate('/');
+  }
+
+  const onLogin = async () => {
+    if (!id || !password) {
+      setLoginError("아이디/패스워드를 입력해주세요");
+    } else {
+      setLoginError("");
+      try {
+        const response = await userApi.login({ nickname: id, password });
+        setIsLoggedIn(true);
+        onLoginModalClose();
+      } catch (error) {
+        console.error("API 호출 오류:", error);
+        setLoginError("아이디와 패스워드를 다시 확인해주세요");
+      }
+    }
+  };
+
+  const onLogout = () => {
+    setIsLoggedIn(false);
+    // 추가 로그아웃 로직 구현 (예: 토큰 제거)
+  };
+
+  const handleIdChange = (value: string) => {
+    setId(value);
+    if (loginError) {
+      setLoginError("");
+    }
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    if (loginError) {
+      setLoginError("");
+    }
+  };
+
   return (
     <FairPresentation
       nfts={nfts}
+      popularNFTs={popularNFTs}
       isLoading={isLoading}
       error={error}
       selectedNft={selectedNft}
       isModalOpen={isModalOpen}
       onNftClick={handleNftClick}
       onCloseModal={handleCloseModal}
+      onBack={onBack}
+      isLoggedIn={isLoggedIn}
+      onLogin={onLogin}
+      onLogout={onLogout}
+      isLoginModalOpen={isLoginModalOpen}
+      onLoginModalOpen={onLoginModalOpen}
+      onLoginModalClose={onLoginModalClose}
+      id={id}
+      setId={handleIdChange}
+      password={password}
+      setPassword={handlePasswordChange}
+      loginError={loginError}
+      selectedPopularNft={selectedPopularNft}
+      onPopularNftClick={handlePopularNftClick}
+      onClosePopularNftModal={handleClosePopularNftModal}
     />
   );
 };
