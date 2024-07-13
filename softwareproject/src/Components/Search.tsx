@@ -1,6 +1,5 @@
-// src/Components/Search.tsx
 import React, { useState } from 'react';
-import axios from 'axios';
+import { Box, Input, Select, Button, Image, VStack, HStack, Text, Heading } from "@chakra-ui/react";
 
 interface SearchResult {
   nationality: string;
@@ -9,60 +8,75 @@ interface SearchResult {
   image: string;
 }
 
-const SearchComponent: React.FC = () => {
+interface SearchComponentProps {
+  onSearchResults: (results: SearchResult[]) => void;
+}
+
+const dummyData: SearchResult[] = [
+  {
+    nationality: "South Korea",
+    grade: 11,
+    questionContent: "ming3",
+    image: "https://i.seadn.io/s/raw/files/c1abbfabee42bc2a146a79b807accb86.webp?w=500&auto=format",
+  },
+  {
+    nationality: "South Korea",
+    grade: 8,
+    questionContent: "React hard",
+    image: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi2.tcafe2a.com%2F240505%2F2552fcd4d34bc4f05bce31c782f87e14_1714912750_8708.gif&type=sc960_832_gif",
+  },
+  {
+    nationality: "South Korea",
+    grade: 1,
+    questionContent: "Help",
+    image: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi.namu.wiki%2Fi%2FgeGngQMnvmK2g3wuKU4O1uNs8Ix1HXQULk9PrnT57lHOlU4AxL9qsNCYXOOY9DIqPWtXnphq8G6NzCcvzv-ppQ.webp&type=sc960_832",
+  },
+];
+
+const SearchComponent: React.FC<SearchComponentProps> = ({ onSearchResults }) => {
   const [query, setQuery] = useState<string>('');
   const [nationality, setNationality] = useState<string>('');
   const [grade, setGrade] = useState<string>('');
-  const [results, setResults] = useState<SearchResult[]>([]);
 
-  const handleSearch = async () => {
-    try {
-      const response = await axios.get<SearchResult[]>('http://54.180.251.107:3000/api/search', {
-        params: { query, nationality, grade }
-      });
-      setResults(response.data);
-    } catch (error) {
-      console.error('Error searching NFTs:', error);
-    }
+  const handleSearch = () => {
+    const filteredResults = dummyData.filter(
+      item =>
+        (!query || item.questionContent.toLowerCase().includes(query.toLowerCase())) &&
+        (!nationality || item.nationality.toLowerCase() === nationality.toLowerCase()) &&
+        (!grade || item.grade.toString() === grade)
+    );
+    onSearchResults(filteredResults);
   };
 
   return (
-    <div>
-      <input
-        type="text"
-        value={query}
-        onChange={e => setQuery(e.target.value)}
-        placeholder="Search for NFTs"
-      />
-
-      <select value={nationality} onChange={e => setNationality(e.target.value)}>
-        <option value="">Select Nationality</option>
-        <option value="southkorea">South Korea</option>
-        <option value="us">US</option>
-        <option value="uk">UK</option>
-      </select>
-
-      <select value={grade} onChange={e => setGrade(e.target.value)}>
-        <option value="">Select Grade</option>
-        {Array.from({ length: 12 }, (_, i) => i + 1).map(grade => (
-          <option key={grade} value={grade}>{grade}</option>
-        ))}
-      </select>
-
-      <button onClick={handleSearch}>Search</button>
-
-      <div>
-        <h2>Search Results</h2>
-        {results.map((item, index) => (
-          <div key={index}>
-            <p>Nationality: {item.nationality}</p>
-            <p>Grade: {item.grade}</p>
-            <p>Question: {item.questionContent}</p>
-            <img src={item.image} alt="NFT" style={{ width: "100px", height: "100px" }} />
-          </div>
-        ))}
-      </div>
-    </div>
+    <Box p={4}>
+      <HStack spacing={4} mb={4}>
+        <Input
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          placeholder="Search for NFTs"
+        />
+        <Select
+          value={nationality}
+          onChange={e => setNationality(e.target.value)}
+          placeholder="Select Nationality"
+        >
+          <option value="southkorea">South Korea</option>
+          <option value="us">US</option>
+          <option value="uk">UK</option>
+        </Select>
+        <Select
+          value={grade}
+          onChange={e => setGrade(e.target.value)}
+          placeholder="Select Grade"
+        >
+          {Array.from({ length: 12 }, (_, i) => i + 1).map(grade => (
+            <option key={grade} value={grade}>{grade}</option>
+          ))}
+        </Select>
+        <Button onClick={handleSearch} colorScheme="blue">검색</Button>
+      </HStack>
+    </Box>
   );
 };
 

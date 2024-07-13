@@ -58,45 +58,21 @@ interface HomePresentationProps {
   onLogout: () => void;
 }
 
-const HomePresentation: React.FC<HomePresentationProps> = ({
-  onLogin,
-  chatHistory,
-  inputValue,
-  onInputChange,
-  onSendMessage,
-  isOpen,
-  onOpen,
-  onClose,
-  messageEndRef,
-  isLoginModalOpen,
-  onLoginModalOpen,
-  onLoginModalClose,
-  id,
-  setId,
-  password,
-  setPassword,
-  error,
-  onCreate,
-  onFindID,
-  onFindPassword,
-  onClickFair,
-  isLoggedIn,
-  onLogout,
-}) => {
+const HomePresentation= (props: HomePresentationProps) => {
   return (
     <Flex height="100vh" direction="column">
       {/* Header */}
       <Flex p={4} bg="gray.100" alignItems="center">
         <Heading size="md">Logo</Heading>
-        <Button ml={2} onClick={onOpen}>
+        <Button ml={2} onClick={props.onOpen}>
           메뉴
         </Button>
-        {isLoggedIn ? (
-          <Button ml="auto" onClick={onLogout}>
+        {props.isLoggedIn ? (
+          <Button ml="auto" onClick={props.onLogout}>
             로그아웃
           </Button>
         ) : (
-          <Button ml="auto" onClick={onLoginModalOpen}>
+          <Button ml="auto" onClick={props.onLoginModalOpen}>
             로그인
           </Button>
         )}
@@ -104,7 +80,7 @@ const HomePresentation: React.FC<HomePresentationProps> = ({
 
       {/* Chat Area */}
       <VStack flex={1} overflowY="auto" p={4} spacing={4} alignItems="stretch">
-        {chatHistory.map((msg) => (
+        {props.chatHistory.map((msg) => (
           <Flex
             key={msg.id}
             justifyContent={msg.sender === "user" ? "flex-end" : "flex-start"}
@@ -119,85 +95,85 @@ const HomePresentation: React.FC<HomePresentationProps> = ({
             </Box>
           </Flex>
         ))}
-        <div ref={messageEndRef}></div>
+        <div ref={props.messageEndRef}></div>
       </VStack>
 
       {/* Input Area */}
       <Flex p={4} bg="gray.100">
         <Input
-          value={inputValue}
-          onChange={onInputChange}
+          value={props.inputValue}
+          onChange={props.onInputChange}
           placeholder="메시지를 입력하세요..."
           mr={2}
         />
-        <Button onClick={onSendMessage}>전송</Button>
+        <Button onClick={props.onSendMessage}>전송</Button>
       </Flex>
 
       {/* Drawer */}
-      <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
+      <Drawer placement="left" onClose={props.onClose} isOpen={props.isOpen}>
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader borderBottomWidth="1px">메뉴</DrawerHeader>
           <DrawerBody>
             <VStack align="stretch">
-              <Button variant="ghost" onClick={onClickFair}>
+              <Button variant="ghost" onClick={props.onClickFair}>
                 전시회
               </Button>
-              {isLoggedIn && <Button variant="ghost">마이페이지</Button>}
-              {isLoggedIn ? (
-                <Button variant="ghost" onClick={onLogout}>
+              {props.isLoggedIn && <Button variant="ghost">마이페이지</Button>}
+              {props.isLoggedIn ? (
+                <Button variant="ghost" onClick={props.onLogout}>
                   로그아웃
                 </Button>
               ) : (
-                <Button variant="ghost" onClick={onLoginModalOpen}>
+                <Button variant="ghost" onClick={props.onLoginModalOpen}>
                   로그인
                 </Button>
               )}
             </VStack>
           </DrawerBody>
-          <Button onClick={onClose}>닫기</Button>
+          <Button onClick={props.onClose}>닫기</Button>
         </DrawerContent>
       </Drawer>
 
       {/* Login Modal */}
-      <Modal isOpen={isLoginModalOpen} onClose={onLoginModalClose}>
+      <Modal isOpen={props.isLoginModalOpen} onClose={props.onLoginModalClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>로그인</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FormControl isInvalid={!!error}>
+            <FormControl isInvalid={!!props.error}>
               <FormLabel>아이디</FormLabel>
               <Input
-                value={id}
-                onChange={(e) => setId(e.target.value)}
+                value={props.id}
+                onChange={(e) => props.setId(e.target.value)}
                 placeholder="아이디를 입력하세요"
               />
             </FormControl>
-            <FormControl mt={4} isInvalid={!!error}>
+            <FormControl mt={4} isInvalid={!!props.error}>
               <FormLabel>비밀번호</FormLabel>
               <Input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={props.password}
+                onChange={(e) => props.setPassword(e.target.value)}
                 placeholder="비밀번호를 입력하세요"
               />
-              <FormErrorMessage>{error}</FormErrorMessage>
+              <FormErrorMessage>{props.error}</FormErrorMessage>
             </FormControl>
           </ModalBody>
           <ModalFooter>
             <Center flexDirection="column" w="100%">
-              <Button colorScheme="blue" w="100%" mb={4} onClick={onLogin}>
+              <Button colorScheme="blue" w="100%" mb={4} onClick={props.onLogin}>
                 로그인
               </Button>
               <HStack spacing={4} justify="center">
-                <Button variant="ghost" onClick={onCreate}>
+                <Button variant="ghost" onClick={props.onCreate}>
                   회원가입
                 </Button>
-                <Button variant="ghost" onClick={onFindID}>
+                <Button variant="ghost" onClick={props.onFindID}>
                   아이디 찾기
                 </Button>
-                <Button variant="ghost" onClick={onFindPassword}>
+                <Button variant="ghost" onClick={props.onFindPassword}>
                   비밀번호 찾기
                 </Button>
               </HStack>

@@ -56,73 +56,61 @@ interface FairPresentationProps {
   onClosePopularNftModal: () => void;
 }
 
-const FairPresentation: React.FC<FairPresentationProps> = ({
-  nfts,
-  popularNFTs,
-  isLoading,
-  error,
-  selectedNft,
-  isModalOpen,
-  onNftClick,
-  onCloseModal,
-  isLoggedIn,
-  onBack,
-  onLogin,
-  onLogout,
-  isLoginModalOpen,
-  onLoginModalOpen,
-  onLoginModalClose,
-  id,
-  setId,
-  password,
-  setPassword,
-  loginError,
-  selectedPopularNft,
-  onPopularNftClick,
-  onClosePopularNftModal,
-}) => (
+interface SearchResult {
+  nationality: string;
+  grade: number;
+  questionContent: string;
+  image: string;
+}
+
+const FairPresentation = (props: FairPresentationProps) => (
   <Container maxW="container.xl" py={8}>
     <Flex direction="column" minHeight="100vh">
       {/* Header */}
       <Flex p={4} bg="gray.100" alignItems="center" mb={8}>
-        <Heading size="md" onClick={onBack}>NFT Fair</Heading>
+        <Heading size="md" onClick={props.onBack}>
+          NFT Fair
+        </Heading>
         <Spacer />
-        <Button onClick={onBack}>질문으로 돌아가기</Button>
-        {isLoggedIn ? (
-          <Button ml="auto" onClick={onLogout}>
+        <Button onClick={props.onBack}>질문으로 돌아가기</Button>
+        {props.isLoggedIn ? (
+          <Button ml="auto" onClick={props.onLogout}>
             로그아웃
           </Button>
         ) : (
-          <Button ml="auto" onClick={onLoginModalOpen}>
+          <Button ml="auto" onClick={props.onLoginModalOpen}>
             로그인
           </Button>
         )}
       </Flex>
 
       {/* Login Modal */}
-      <Modal isOpen={isLoginModalOpen} onClose={onLoginModalClose}>
+      <Modal isOpen={props.isLoginModalOpen} onClose={props.onLoginModalClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>로그인</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FormControl isInvalid={!!loginError}>
+            <FormControl isInvalid={!!props.loginError}>
               <FormLabel>아이디</FormLabel>
-              <Input value={id} onChange={(e) => setId(e.target.value)} />
+              <Input
+                value={props.id}
+                onChange={(e) => props.setId(e.target.value)}
+              />
               <FormLabel mt={4}>비밀번호</FormLabel>
               <Input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={props.password}
+                onChange={(e) => props.setPassword(e.target.value)}
               />
-              <FormErrorMessage>{loginError}</FormErrorMessage>
+              <FormErrorMessage>{props.loginError}</FormErrorMessage>
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onLogin}>
+            <Button colorScheme="blue" mr={3} onClick={props.onLogin}>
               로그인
             </Button>
-            <Button variant="ghost" onClick={onLoginModalClose}>
+            <Button variant="ghost" onClick={props.onLoginModalClose}>
               취소
             </Button>
           </ModalFooter>
@@ -132,18 +120,24 @@ const FairPresentation: React.FC<FairPresentationProps> = ({
       {/* Main Content */}
       <Flex direction={{ base: "column", md: "row" }} justify="space-between">
         <Box flex={1} p={4} borderWidth={2}>
-          {popularNFTs && popularNFTs.length > 0 ? (
-            <KeywordChart data={popularNFTs} />
+          {props.popularNFTs && props.popularNFTs.length > 0 ? (
+            <KeywordChart data={props.popularNFTs} />
           ) : (
             <Text>인기 NFT 데이터가 없습니다.</Text>
           )}
+          <Box textAlign={"center"}>
+            <br></br>
+            <Heading size="md" mb={4}>
+              ❤️트랜드 키워드
+            </Heading>
+          </Box>
         </Box>
         <Box flex={1} p={4} borderWidth={2}>
           <Heading size="md" mb={4}>
             인기 NFT🔥
           </Heading>
           <Box display="flex" overflowX="scroll" p={2}>
-            {popularNFTs.map((nft) => (
+            {props.popularNFTs.map((nft) => (
               <Box
                 key={nft.keyword}
                 borderWidth={1}
@@ -152,7 +146,7 @@ const FairPresentation: React.FC<FairPresentationProps> = ({
                 cursor="pointer"
                 mr={4}
                 minW="250px"
-                onClick={() => onPopularNftClick(nft)}
+                onClick={() => props.onPopularNftClick(nft)}
               >
                 <Image src={nft.nftDetails.image} alt={nft.keyword} />
                 <VStack p={4} align="start">
@@ -171,30 +165,32 @@ const FairPresentation: React.FC<FairPresentationProps> = ({
         </Box>
       </Flex>
 
-      <SearchComponent />
+      <SearchComponent
+        onSearchResults={(results: SearchResult[]) => console.log(results)}
+      />
 
-      {isLoading && (
+      {props.isLoading && (
         <Flex alignItems="center" justifyContent="center" flex={1}>
           <LoadingPresentation />
         </Flex>
       )}
 
-      {error && (
+      {props.error && (
         <Alert status="error">
           <AlertIcon />
-          {error}
+          {props.error}
         </Alert>
       )}
 
       <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6}>
-        {nfts.map((nft) => (
+        {props.nfts.map((nft) => (
           <Box
             key={nft.tokenId}
             borderWidth={1}
             borderRadius="lg"
             overflow="hidden"
             cursor="pointer"
-            onClick={() => onNftClick(nft)}
+            onClick={() => props.onNftClick(nft)}
           >
             <Image src={nft.imageUrl} alt={nft.questionContent} />
             <VStack p={4} align="start">
@@ -212,32 +208,34 @@ const FairPresentation: React.FC<FairPresentationProps> = ({
       </Grid>
 
       {/* NFT Detail Modal */}
-      <Modal isOpen={isModalOpen} onClose={onCloseModal} size="xl">
+      <Modal isOpen={props.isModalOpen} onClose={props.onCloseModal} size="xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>NFT 상세 정보</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {selectedNft && (
+            {props.selectedNft && (
               <Flex>
                 <Box flex={1}>
                   <Image
-                    src={selectedNft.imageUrl}
-                    alt={selectedNft.questionContent}
+                    src={props.selectedNft.imageUrl}
+                    alt={props.selectedNft.questionContent}
                   />
                 </Box>
                 <Box flex={1} ml={4}>
                   <VStack align="start" spacing={3}>
                     <Text fontWeight="bold">질문 내용:</Text>
-                    <Text>{selectedNft.questionContent}</Text>
+                    <Text>{props.selectedNft.questionContent}</Text>
                     <Text fontWeight="bold">답변 내용:</Text>
-                    <Text>{selectedNft.answerContent}</Text>
-                    <Text fontWeight="bold">학년: {selectedNft.grade}</Text>
+                    <Text>{props.selectedNft.answerContent}</Text>
                     <Text fontWeight="bold">
-                      국적: {selectedNft.nationality}
+                      학년: {props.selectedNft.grade}
                     </Text>
                     <Text fontWeight="bold">
-                      Token ID: {selectedNft.tokenId}
+                      국적: {props.selectedNft.nationality}
+                    </Text>
+                    <Text fontWeight="bold">
+                      Token ID: {props.selectedNft.tokenId}
                     </Text>
                   </VStack>
                 </Box>
@@ -245,7 +243,7 @@ const FairPresentation: React.FC<FairPresentationProps> = ({
             )}
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onCloseModal}>
+            <Button colorScheme="blue" mr={3} onClick={props.onCloseModal}>
               닫기
             </Button>
           </ModalFooter>
@@ -254,8 +252,8 @@ const FairPresentation: React.FC<FairPresentationProps> = ({
 
       {/* Popular NFT Detail Modal */}
       <Modal
-        isOpen={!!selectedPopularNft}
-        onClose={onClosePopularNftModal}
+        isOpen={!!props.selectedPopularNft}
+        onClose={props.onClosePopularNftModal}
         size="xl"
       >
         <ModalOverlay />
@@ -263,30 +261,34 @@ const FairPresentation: React.FC<FairPresentationProps> = ({
           <ModalHeader>인기 NFT 상세 정보</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {selectedPopularNft && (
+            {props.selectedPopularNft && (
               <Flex>
                 <Box flex={1}>
                   <Image
-                    src={selectedPopularNft.nftDetails.image}
-                    alt={selectedPopularNft.keyword}
+                    src={props.selectedPopularNft.nftDetails.image}
+                    alt={props.selectedPopularNft.keyword}
                   />
                 </Box>
                 <Box flex={1} ml={4}>
                   <VStack align="start" spacing={3}>
                     <Text fontWeight="bold">Keyword:</Text>
-                    <Text>{selectedPopularNft.keyword}</Text>
+                    <Text>{props.selectedPopularNft.keyword}</Text>
                     <Text fontWeight="bold">질문 내용:</Text>
-                    <Text>{selectedPopularNft.nftDetails.questionContent}</Text>
+                    <Text>
+                      {props.selectedPopularNft.nftDetails.questionContent}
+                    </Text>
                     <Text fontWeight="bold">답변 내용:</Text>
-                    <Text>{selectedPopularNft.nftDetails.answerContent}</Text>
-                    <Text fontWeight="bold">
-                      학년: {selectedPopularNft.nftDetails.grade}
+                    <Text>
+                      {props.selectedPopularNft.nftDetails.answerContent}
                     </Text>
                     <Text fontWeight="bold">
-                      국적: {selectedPopularNft.nftDetails.nationality}
+                      학년: {props.selectedPopularNft.nftDetails.grade}
                     </Text>
                     <Text fontWeight="bold">
-                      Count: {selectedPopularNft.count}
+                      국적: {props.selectedPopularNft.nftDetails.nationality}
+                    </Text>
+                    <Text fontWeight="bold">
+                      Count: {props.selectedPopularNft.count}
                     </Text>
                   </VStack>
                 </Box>
@@ -294,7 +296,11 @@ const FairPresentation: React.FC<FairPresentationProps> = ({
             )}
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClosePopularNftModal}>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={props.onClosePopularNftModal}
+            >
               닫기
             </Button>
           </ModalFooter>

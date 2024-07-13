@@ -24,7 +24,7 @@ interface RegisterPresentationProps {
   onRegister: () => void;
 }
 
-const RegisterPresentation: React.FC<RegisterPresentationProps> = (props) => {
+const RegisterPresentation = (props: RegisterPresentationProps) => {
   const nationalities = [
     "United States of America(USA)",
     "United Kingdom(UK)",
