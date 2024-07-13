@@ -147,14 +147,14 @@ const FairPresentation = (props: FairPresentationProps) => (
               mr={4}
               minW="250px"
               onClick={() => props.onPopularNftClick(nft)}
-              maxW="500px"  // 최대 너비 설정
+              maxW="500px"
             >
               <Image
                 src={nft.nftDetails.image}
                 alt={nft.keyword}
-                objectFit="cover"  // 이미지가 잘리도록 설정
-                w="100%"  // 이미지 너비 100%로 설정
-                h="300px"  // 이미지 높이 설정
+                objectFit="cover"
+                w="100%"
+                h="300px"
               />
               <Box borderTopWidth="1px" borderTopColor="gray.200" mt={2} />
               <VStack p={4} align="start">
@@ -203,15 +203,15 @@ const FairPresentation = (props: FairPresentationProps) => (
           overflow="hidden"
           cursor="pointer"
           onClick={() => props.onNftClick(nft)}
-          maxW="250px"  // 최대 너비 설정
-          maxH="500px"  // 최대 높이 설정
+          maxW="250px"
+          maxH="500px"
         >
           <Image
             src={nft.imageUrl}
             alt={nft.questionContent}
-            objectFit="cover"  // 이미지가 잘리도록 설정
-            w="100%"  // 이미지 너비 100%로 설정
-            h="300px"  // 이미지 높이 설정
+            objectFit="cover"
+            w="100%"
+            h="300px"
           />
           <Box borderTopWidth="1px" borderTopColor="gray.200" mt={2} />
           <Box p={4}>
