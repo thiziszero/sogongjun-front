@@ -92,7 +92,7 @@ const FairContainer: React.FC = () => {
           {
             tokenId: "6",
             metadataUrl: "ipfs://QmbGqrc3Fg8dKkSbrvDV3ahqyxzbDjbr3gmBDn8gDSm63N",
-            questionContent: "When I can go home?",
+            questionContent: "When can I go home?",
             answerContent: "NAGA",
             nationality: "South Korea",
             grade: "9",
