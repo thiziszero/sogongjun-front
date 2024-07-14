@@ -74,11 +74,11 @@ const FairContainer: React.FC = () => {
           {
             tokenId: "4",
             metadataUrl: "ipfs://QmbGqrc3Fg8dKkSbrvDV3ahqyxzbDjbr3gmBDn8gDSm63N",
-            questionContent: "박명수 잘 생겼다.",
+            questionContent: "주식을 어떻게 해야해?",
             answerContent: "Park",
             nationality: "Japan",
             grade: "2",
-            imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWxOkUg6QzTp0SXQjexEC9ZD_exVYmjNqruw&s",
+            imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-3mM9IOFrMKFzuaUGzqq1okF4oBNxrO_ySw&s",
           },
           {
             tokenId: "5",
@@ -104,8 +104,8 @@ const FairContainer: React.FC = () => {
             questionContent: "I wanna go",
             answerContent: "Software",
             nationality: "USA",
-            grade: "10",
-            imageUrl: "https://dispatch.cdnser.be/cms-content/uploads/2019/08/26/f6a0d05b-c1c7-4a95-a6f8-7e499ea9f195.jpg",
+            grade: "1",
+            imageUrl: "https://flexible.img.hani.co.kr/flexible/normal/850/567/imgdb/original/2023/0111/20230111503366.jpg",
           },
           {
             tokenId: "8",

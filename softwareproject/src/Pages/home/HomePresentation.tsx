@@ -6,6 +6,7 @@ import {
   Flex,
   Heading,
   Input,
+  Spinner,
   VStack,
   HStack,
   Text,
@@ -24,12 +25,15 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
+  Image,
 } from "@chakra-ui/react";
 
 interface Message {
   id: number;
   message: string;
   sender: "user" | "bot";
+  image?: string;
+  loadingImage?: boolean;
 }
 
 interface HomePresentationProps {
@@ -58,12 +62,18 @@ interface HomePresentationProps {
   onLogout: () => void;
 }
 
-const HomePresentation= (props: HomePresentationProps) => {
+const HomePresentation = (props: HomePresentationProps) => {
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      props.onSendMessage();
+    }
+  };
+
   return (
     <Flex height="100vh" direction="column">
       {/* Header */}
       <Flex p={4} bg="gray.100" alignItems="center">
-        <Heading size="md">Logo</Heading>
+        <Heading size="md">ForeDU❤️</Heading>
         <Button ml={2} onClick={props.onOpen}>
           메뉴
         </Button>
@@ -86,12 +96,18 @@ const HomePresentation= (props: HomePresentationProps) => {
             justifyContent={msg.sender === "user" ? "flex-end" : "flex-start"}
           >
             <Box
-              maxWidth="70%"
-              bg={msg.sender === "user" ? "blue.100" : "gray.200"}
-              p={2}
+              key={msg.id}
+              alignSelf={msg.sender === "user" ? "flex-end" : "flex-start"}
+              bg={msg.sender === "user" ? "blue.100" : "gray.100"}
               borderRadius="md"
+              p={2}
+              maxWidth="80%"
             >
               <Text>{msg.message}</Text>
+              {msg.loadingImage && <Spinner />}
+              {!msg.loadingImage && msg.image && (
+                <Image src={msg.image} alt="chat image" />
+              )}
             </Box>
           </Flex>
         ))}
@@ -105,6 +121,7 @@ const HomePresentation= (props: HomePresentationProps) => {
           onChange={props.onInputChange}
           placeholder="메시지를 입력하세요..."
           mr={2}
+          onKeyPress={handleKeyPress}
         />
         <Button onClick={props.onSendMessage}>전송</Button>
       </Flex>
@@ -163,7 +180,12 @@ const HomePresentation= (props: HomePresentationProps) => {
           </ModalBody>
           <ModalFooter>
             <Center flexDirection="column" w="100%">
-              <Button colorScheme="blue" w="100%" mb={4} onClick={props.onLogin}>
+              <Button
+                colorScheme="blue"
+                w="100%"
+                mb={4}
+                onClick={props.onLogin}
+              >
                 로그인
               </Button>
               <HStack spacing={4} justify="center">

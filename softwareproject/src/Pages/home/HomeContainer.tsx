@@ -1,31 +1,20 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDisclosure } from "@chakra-ui/react";
+import { useDisclosure, Spinner } from "@chakra-ui/react";
 import { useAppContext } from "../../AppContext";
 import HomePresentation from "./HomePresentation";
-import { nftApi, questionApi, userApi } from "../../Apis/apis";
-import {
-  QuestionRequest,
-  CreateNFTRequest,
-} from "../../Interfaces/request";
-import {
-  QuestionResponse,
-  CreateNFTResponse,
-  NFTListResponse
-} from "../../Interfaces/response";
 
 interface Message {
   id: number;
   message: string;
   sender: "user" | "bot";
+  image?: string;
+  loadingImage?: boolean;
 }
 
 const HomeContainer: React.FC = () => {
   const navigate = useNavigate();
   const { isLoggedIn, setIsLoggedIn } = useAppContext();
-  const [nfts, setNfts] = useState<NFTListResponse["nfts"]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
   const [inputValue, setInputValue] = useState("");
   const [chatHistory, setChatHistory] = useState<Message[]>([
     { id: 1, message: "안녕하세요!", sender: "bot" },
@@ -56,7 +45,8 @@ const HomeContainer: React.FC = () => {
     } else {
       setError("");
       try {
-        const response = await userApi.login({ nickname: id, password });
+        // Dummy login response
+        const response = { data: { success: true } };
         console.log("API 응답 데이터:", response.data);
         setIsLoggedIn(true);
         onLoginModalClose();
@@ -122,52 +112,54 @@ const HomeContainer: React.FC = () => {
       setInputValue("");
 
       try {
-        // Call /api/questions
-        const questionRequest: QuestionRequest = {
-          userId: 1, // 임시 userId, 실제로는 로그인된 사용자의 ID를 사용해야 합니다.
-          content: inputValue,
+        // Dummy response for chat
+        const dummyResponse = {
+          answer: {
+            text: "인생에 대한 정의는 사람마다 다를 수 있지만, 일반적으로 말하면 인생은 각자의 경험과 선택, 그리고 그로 인해 얻는 성장과 의미들을 포괄하는 개념입니다. 인생은 단순히 존재하는 것 이상으로, 경험을 통해 배우고 발전하며 자아를 깊이 있게 이해하는 과정입니다. 때로는 성공과 실패, 기쁨과 슬픔, 도전과 극복의 연속이기도 합니다. 결국 인생은 각자가 자신의 가치관과 목표에 따라 의미를 부여하고 이루어 나가는 과정이라고 할 수 있습니다.",
+            image: "https://newsimg-hams.hankookilbo.com/2022/03/23/579c2b14-56a7-4f46-b17d-1111e9a8a596.png",
+          },
         };
-        const questionResponse = await questionApi.askQuestion(questionRequest);
-        const questionData: QuestionResponse = questionResponse.data;
 
-        // Call /api/nfts/{questionId}
-        const createNFTRequest: CreateNFTRequest = {
-          questionId: questionData.questionId,
-          questionContent: inputValue,
-          answerContent: questionData.answer.text,
-          nationality: "KR", // 임시 값, 실제로는 사용자의 국적을 사용해야 합니다.
-          grade: 1, // 임시 값, 실제로는 사용자의 등급을 사용해야 합니다.
-          imageUrl: questionData.answer.image || "",
-        };
-        const nftResponse = await nftApi.createNFT(createNFTRequest);
-        const nftData: CreateNFTResponse = nftResponse.data;
-
-        // Add bot response to chat history
+        // Add bot text response to chat history
+        const textMessageId = chatHistory.length + 2;
         setChatHistory((prev) => [
           ...prev,
           {
-            id: prev.length + 1,
-            message: questionData.answer.text,
+            id: textMessageId,
+            message: dummyResponse.answer.text,
             sender: "bot",
           },
         ]);
 
-        if (questionData.answer.image) {
+        if (dummyResponse.answer.image) {
+          // Add loading state for the image
+          const imageMessageId = textMessageId + 1;
           setChatHistory((prev) => [
             ...prev,
             {
-              id: prev.length + 1,
-              message: `이미지가 생성되었습니다: ${questionData.answer.image}`,
+              id: imageMessageId,
+              message: "",
               sender: "bot",
+              loadingImage: true,
             },
           ]);
+
+          setTimeout(() => {
+            setChatHistory((prev) =>
+              prev.map((msg) =>
+                msg.id === imageMessageId
+                  ? { ...msg, message: `이미지가 생성되었습니다`, image: dummyResponse.answer.image, loadingImage: false }
+                  : msg
+              )
+            );
+          }, 5000);
         }
 
         setChatHistory((prev) => [
           ...prev,
           {
-            id: prev.length + 1,
-            message: `NFT가 생성되었습니다. Token ID: ${nftData.nft.tokenId}`,
+            id: textMessageId + 2,
+            message: `NFT가 생성되었습니다. Token ID: 123456`,
             sender: "bot",
           },
         ]);
