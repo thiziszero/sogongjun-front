@@ -57,7 +57,7 @@ const FairContainer: React.FC = () => {
             tokenId: "2",
             metadataUrl: "ipfs://QmeMfGGHgY2ANg4UXm9gcuGRShiHiFDsGVUx5Hg9BtJN1X",
             questionContent: "React hard",
-            answerContent: "ting",
+            answerContent: "츄가 미래다.",
             nationality: "South Korea",
             grade: "8",
             imageUrl: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi2.tcafe2a.com%2F240505%2F2552fcd4d34bc4f05bce31c782f87e14_1714912750_8708.gif&type=sc960_832_gif",
