@@ -4,7 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { useDisclosure } from "@chakra-ui/react";
 import { useAppContext } from "../../AppContext";
 import { nftApi, userApi } from "../../Apis/apis";
-import { NFTListResponse, NFTData } from "../../Interfaces/response";
+import {
+  NFTListResponse,
+  NFTData,
+} from "../../Interfaces/response";
 
 const FairContainer: React.FC = () => {
   const navigate = useNavigate();
