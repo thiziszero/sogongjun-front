@@ -40,10 +40,13 @@ const HomeContainer: React.FC = () => {
     } else {
       setError("");
       try {
-        const response = await userApi.login({ nickname: id, password });
+        const response = await userApi.login({ nickname: id, password});
         console.log(response);
         context.setIsLoggedIn(true);
         context.setUserId(id);
+        localStorage.setItem('token', response.data.token as string);
+        console.log("메세지" + response.data.message);
+        console.log("안녕" + localStorage.getItem('token'));
         onLoginModalClose();
       } catch (error) {
         console.error("API 호출 오류:", error);
