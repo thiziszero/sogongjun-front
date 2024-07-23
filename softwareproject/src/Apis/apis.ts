@@ -18,13 +18,29 @@ import {
   PopularNFTResponse
 } from "../Interfaces/response";
 
-// Axios 인스턴스 생성
-const api = axios.create({
-  baseURL: process.env.REACT_APP_BASEURL,
+// Axios 인스턴스 생성 - User 관련 API
+const userApiInstance = axios.create({
+  baseURL: process.env.REACT_APP_USER_BASEURL,
 });
 
-// 인증 토큰을 요청 헤더에 추가하는 인터셉터
-api.interceptors.request.use((config) => {
+// Axios 인스턴스 생성 - NFT 관련 API
+const nftApiInstance = axios.create({
+  baseURL: process.env.REACT_APP_NFT_BASEURL,
+});
+
+// 인증 토큰을 요청 헤더에 추가하는 인터셉터 - User API
+userApiInstance.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
+
+// 인증 토큰을 요청 헤더에 추가하는 인터셉터 - NFT API
+nftApiInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`;
@@ -38,13 +54,13 @@ export const userApi = {
   register: async (
     request: RegisterRequest
   ): Promise<AxiosResponse<RegisterResponse>> => {
-    return api.post("/api/users/register", request);
+    return userApiInstance.post("/api/users/register", request);
   },
 
   login: async (
     request: LoginRequest
   ): Promise<AxiosResponse<LoginResponse>> => {
-    return api.post("/api/users/login", request);
+    return userApiInstance.post("/api/users/login", request);
   },
 };
 
@@ -52,13 +68,13 @@ export const questionApi = {
   askQuestion: async (
     request: QuestionRequest
   ): Promise<AxiosResponse<QuestionResponse>> => {
-    return api.post("/api/questions", request);
+    return userApiInstance.post("/api/questions", request);
   },
 
   convertAnswerToImage: async (
     request: AnswerToImageRequest
   ): Promise<AxiosResponse<AnswerToImageResponse>> => {
-    return api.post(`/api/image`, request);
+    return userApiInstance.post(`/api/image`, request);
   },
 };
 
@@ -66,20 +82,20 @@ export const nftApi = {
   createNFT: async (
     request: CreateNFTRequest
   ): Promise<AxiosResponse<CreateNFTResponse>> => {
-    return api.post(`/api/nfts/${request.questionId}`, request);
+    return nftApiInstance.post(`/api/nfts/${request.questionId}`, request);
   },
 
   getNFTDetail: async (
     tokenId: string
   ): Promise<AxiosResponse<NFTDetailResponse>> => {
-    return api.get(`/api/nfts/${tokenId}`);
+    return nftApiInstance.get(`/api/nfts/${tokenId}`);
   },
 
   getNFTList: async (): Promise<AxiosResponse<NFTListResponse>> => {
-    return api.get(`/api/questions/nfts`);
+    return nftApiInstance.get(`/api/questions/nfts`);
   },
 
   getNFTPopularList: async (): Promise<AxiosResponse<PopularNFTResponse>> => {
-    return api.get(`/api/top3-nft`);
+    return nftApiInstance.get(`/api/top3-nft`);
   }
 };

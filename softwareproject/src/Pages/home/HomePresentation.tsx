@@ -26,6 +26,7 @@ import {
   FormLabel,
   FormErrorMessage,
   Image,
+  Spacer,
 } from "@chakra-ui/react";
 
 interface Message {
@@ -70,12 +71,22 @@ const HomePresentation = (props: HomePresentationProps) => {
   };
 
   return (
-    <Flex height="100vh" direction="column">
+    <Flex
+      flex={1}
+      height="100vh"
+      direction="column"
+      ml={props.isOpen ? "320px" : "0"}
+      transition="margin-left 0.3s"
+    >
       {/* Header */}
       <Flex p={4} bg="gray.100" alignItems="center">
-        <Heading size="md">ForeDU❤️</Heading>
+        <Heading size="md">MultiLearn❤️</Heading>
         <Button ml={2} onClick={props.onOpen}>
           메뉴
+        </Button>
+        <Spacer />
+        <Button variant="ghost" onClick={props.onClickFair}>
+          전시회
         </Button>
         {props.isLoggedIn ? (
           <Button ml="auto" onClick={props.onLogout}>
@@ -127,8 +138,15 @@ const HomePresentation = (props: HomePresentationProps) => {
       </Flex>
 
       {/* Drawer */}
-      <Drawer placement="left" onClose={props.onClose} isOpen={props.isOpen}>
-        <DrawerOverlay />
+      <Drawer
+        placement="left"
+        onClose={props.onClose}
+        isOpen={props.isOpen}
+        variant="permanent"
+        closeOnOverlayClick={false}
+        closeOnEsc={false}
+        trapFocus={false}
+      >
         <DrawerContent>
           <DrawerHeader borderBottomWidth="1px">메뉴</DrawerHeader>
           <DrawerBody>

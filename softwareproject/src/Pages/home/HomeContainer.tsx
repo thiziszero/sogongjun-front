@@ -1,16 +1,12 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDisclosure, Spinner } from "@chakra-ui/react";
+import { useDisclosure } from "@chakra-ui/react";
 import { useAppContext } from "../../AppContext";
 import HomePresentation from "./HomePresentation";
-
-interface Message {
-  id: number;
-  message: string;
-  sender: "user" | "bot";
-  image?: string;
-  loadingImage?: boolean;
-}
+import { userApi, questionApi, nftApi } from "../../Apis/apis";
+import { QuestionResponse, CreateNFTResponse } from "../../Interfaces/response";
+import {QuestionRequest} from "../../Interfaces/request";
+import { Message } from "../../Interfaces/interface";
 
 const HomeContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -45,12 +41,9 @@ const HomeContainer: React.FC = () => {
     } else {
       setError("");
       try {
-        // Dummy login response
-        const response = { data: { success: true } };
-        console.log("API 응답 데이터:", response.data);
+        const response = await userApi.login({ nickname: id, password });
         setIsLoggedIn(true);
         onLoginModalClose();
-        // 로그인 성공 후 추가적인 처리 (예: 상태 업데이트, 리다이렉트 등)
       } catch (error) {
         console.error("API 호출 오류:", error);
         setError("아이디와 패스워드를 다시 확인해주세요");
@@ -112,57 +105,41 @@ const HomeContainer: React.FC = () => {
       setInputValue("");
 
       try {
-        // Dummy response for chat
-        const dummyResponse = {
-          answer: {
-            text: "인생에 대한 정의는 사람마다 다를 수 있지만, 일반적으로 말하면 인생은 각자의 경험과 선택, 그리고 그로 인해 얻는 성장과 의미들을 포괄하는 개념입니다. 인생은 단순히 존재하는 것 이상으로, 경험을 통해 배우고 발전하며 자아를 깊이 있게 이해하는 과정입니다. 때로는 성공과 실패, 기쁨과 슬픔, 도전과 극복의 연속이기도 합니다. 결국 인생은 각자가 자신의 가치관과 목표에 따라 의미를 부여하고 이루어 나가는 과정이라고 할 수 있습니다.",
-            image: "https://newsimg-hams.hankookilbo.com/2022/03/23/579c2b14-56a7-4f46-b17d-1111e9a8a596.png",
-          },
-        };
+        const request: QuestionRequest = { userId: 1, content: inputValue }; // userId는 적절한 값으로 설정
+        const response = await questionApi.askQuestion(request);
+        const { data } = response;
+        
+        const newMessages: Message[] = [
+          { id: chatHistory.length + 2, message: data.answer.text, sender: "bot" },
+        ];
 
-        // Add bot text response to chat history
-        const textMessageId = chatHistory.length + 2;
-        setChatHistory((prev) => [
-          ...prev,
-          {
-            id: textMessageId,
-            message: dummyResponse.answer.text,
+        if (data.answer.image) {
+          newMessages.push({
+            id: chatHistory.length + 3,
+            message: "이미지가 생성되었습니다",
+            image: data.answer.image, // null 대신 string | undefined를 사용
             sender: "bot",
-          },
-        ]);
-
-        if (dummyResponse.answer.image) {
-          // Add loading state for the image
-          const imageMessageId = textMessageId + 1;
-          setChatHistory((prev) => [
-            ...prev,
-            {
-              id: imageMessageId,
-              message: "",
-              sender: "bot",
-              loadingImage: true,
-            },
-          ]);
-
-          setTimeout(() => {
-            setChatHistory((prev) =>
-              prev.map((msg) =>
-                msg.id === imageMessageId
-                  ? { ...msg, message: `이미지가 생성되었습니다`, image: dummyResponse.answer.image, loadingImage: false }
-                  : msg
-              )
-            );
-          }, 5000);
+          });
         }
 
-        setChatHistory((prev) => [
-          ...prev,
-          {
-            id: textMessageId + 2,
-            message: `NFT가 생성되었습니다. Token ID: 123456`,
+        const nftResponse = await nftApi.createNFT({
+          questionId: data.questionId,
+          questionContent: inputValue,
+          answerContent: data.answer.text,
+          nationality: "KR", // 예시 데이터
+          grade: 1, // 예시 데이터
+          imageUrl: data.answer.image || "",
+        });
+        
+        if (nftResponse.data.nft) {
+          newMessages.push({
+            id: chatHistory.length + 4,
+            message: `NFT가 생성되었습니다. Token ID: ${nftResponse.data.nft.tokenId}`,
             sender: "bot",
-          },
-        ]);
+          });
+        }
+
+        setChatHistory((prev) => [...prev, ...newMessages]);
       } catch (error) {
         console.error("API 호출 오류:", error);
         setChatHistory((prev) => [
