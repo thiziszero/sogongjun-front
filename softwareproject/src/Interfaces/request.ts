@@ -13,7 +13,6 @@ export interface LoginRequest {
 
 // 질문 및 응답 생성 요청 및 응답
 export interface QuestionRequest {
-    userId: number;
     content: string;
 }
 

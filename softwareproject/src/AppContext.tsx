@@ -5,6 +5,8 @@ interface AppContextType {
   setLoading: (loading: boolean) => void;
   isLoggedIn: boolean;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
+  userId: string | null;
+  setUserId: (userId: string | null) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -12,6 +14,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
+  const [userId, setUserId] = useState<string | null>(null);
 
   return (
     <AppContext.Provider value={{
@@ -19,6 +22,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setLoading,
       isLoggedIn,
       setIsLoggedIn,
+      userId,
+      setUserId,
     }}>
       {children}
     </AppContext.Provider>

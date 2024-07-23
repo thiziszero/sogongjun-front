@@ -4,13 +4,12 @@ import { useDisclosure } from "@chakra-ui/react";
 import { useAppContext } from "../../AppContext";
 import HomePresentation from "./HomePresentation";
 import { userApi, questionApi, nftApi } from "../../Apis/apis";
-import { QuestionResponse, CreateNFTResponse } from "../../Interfaces/response";
 import {QuestionRequest} from "../../Interfaces/request";
 import { Message } from "../../Interfaces/interface";
 
 const HomeContainer: React.FC = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, setIsLoggedIn } = useAppContext();
+  const context = useAppContext();
   const [inputValue, setInputValue] = useState("");
   const [chatHistory, setChatHistory] = useState<Message[]>([
     { id: 1, message: "안녕하세요!", sender: "bot" },
@@ -42,7 +41,9 @@ const HomeContainer: React.FC = () => {
       setError("");
       try {
         const response = await userApi.login({ nickname: id, password });
-        setIsLoggedIn(true);
+        console.log(response);
+        context.setIsLoggedIn(true);
+        context.setUserId(id);
         onLoginModalClose();
       } catch (error) {
         console.error("API 호출 오류:", error);
@@ -52,7 +53,8 @@ const HomeContainer: React.FC = () => {
   };
 
   const onLogout = () => {
-    setIsLoggedIn(false);
+    context.setIsLoggedIn(false);
+    context.setUserId(null);
     // 여기에 로그아웃 관련 추가 로직을 구현할 수 있습니다.
     // 예: 토큰 제거, 서버에 로그아웃 요청 등
   };
@@ -92,7 +94,7 @@ const HomeContainer: React.FC = () => {
   };
 
   const handleSendMessage = async () => {
-    if (!isLoggedIn) {
+    if (!context.isLoggedIn) {
       onLoginModalOpen();
       return;
     }
@@ -105,9 +107,10 @@ const HomeContainer: React.FC = () => {
       setInputValue("");
 
       try {
-        const request: QuestionRequest = { userId: 1, content: inputValue }; // userId는 적절한 값으로 설정
+        const request: QuestionRequest = { content: inputValue };
         const response = await questionApi.askQuestion(request);
         const { data } = response;
+        console.log(data);
         
         const newMessages: Message[] = [
           { id: chatHistory.length + 2, message: data.answer.text, sender: "bot" },
@@ -182,7 +185,7 @@ const HomeContainer: React.FC = () => {
       onCreate={onCreate}
       onFindID={onFindID}
       onFindPassword={onFindPassword}
-      isLoggedIn={isLoggedIn}
+      isLoggedIn={context.isLoggedIn}
       onLogout={onLogout}
     />
   );

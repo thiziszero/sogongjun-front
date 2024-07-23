@@ -72,7 +72,7 @@ const FairPresentation = (props: FairPresentationProps) => (
         boxShadow="md"
       >
         <Heading size="md" onClick={props.onBack}>
-          Multilearn 전시회
+          MultiLearn 전시회
         </Heading>
         <Spacer />
         <Button onClick={props.onBack}>질문하기</Button>

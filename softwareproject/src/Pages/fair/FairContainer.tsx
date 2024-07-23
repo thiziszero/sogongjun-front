@@ -11,7 +11,7 @@ import {
 
 const FairContainer: React.FC = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, setIsLoggedIn } = useAppContext();
+  const context = useAppContext();
   const [nfts, setNfts] = useState<NFTListResponse["nfts"]>([]);
   const [popularNFTs, setPopularNFTs] = useState<NFTData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -76,7 +76,7 @@ const FairContainer: React.FC = () => {
       setLoginError("");
       try {
         const response = await userApi.login({ nickname: id, password });
-        setIsLoggedIn(true);
+        context.setIsLoggedIn(true);
         onLoginModalClose();
       } catch (error) {
         console.error("API 호출 오류:", error);
@@ -86,7 +86,8 @@ const FairContainer: React.FC = () => {
   };
 
   const onLogout = () => {
-    setIsLoggedIn(false);
+    context.setIsLoggedIn(false);
+    context.setUserId(null);
     // 추가 로그아웃 로직 구현 (예: 토큰 제거)
   };
 
@@ -115,7 +116,7 @@ const FairContainer: React.FC = () => {
       onNftClick={handleNftClick}
       onCloseModal={handleCloseModal}
       onBack={onBack}
-      isLoggedIn={isLoggedIn}
+      isLoggedIn={context.isLoggedIn}
       onLogin={onLogin}
       onLogout={onLogout}
       isLoginModalOpen={isLoginModalOpen}
