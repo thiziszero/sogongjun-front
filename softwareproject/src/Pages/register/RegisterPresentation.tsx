@@ -22,6 +22,7 @@ interface RegisterPresentationProps {
   setGrade: (grade: number) => void;
   error: string;
   onRegister: () => void;
+  clickImage: () => void;
 }
 
 const RegisterPresentation = (props: RegisterPresentationProps) => {
@@ -43,7 +44,8 @@ const RegisterPresentation = (props: RegisterPresentationProps) => {
             <Box textAlign={"center"}>
               <Heading>회원가입👌</Heading>
               <img
-                src="https://news.nateimg.co.kr/orgImg/ck/2024/01/05/kuk202401050348.680x.0.jpg"
+                onClick={props.clickImage}
+                src="https://static.vecteezy.com/system/resources/thumbnails/000/585/659/small/sarmi2-28.jpg"
                 width="300px"
                 height="300px"
                 style={{ marginLeft: "auto", marginRight: "auto" }}
@@ -110,6 +112,7 @@ const RegisterPresentation = (props: RegisterPresentationProps) => {
                   <option value='12'>12</option>
                 </Select>
                 <Button onClick={props.onRegister}>등록하기</Button>
+                <Button onClick={props.clickImage}>뒤로가기</Button>
               </Stack>
             </Box>
           </Stack>

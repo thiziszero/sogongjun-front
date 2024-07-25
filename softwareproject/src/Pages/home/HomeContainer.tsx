@@ -4,7 +4,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import { useAppContext } from "../../AppContext";
 import HomePresentation from "./HomePresentation";
 import { userApi, questionApi, nftApi } from "../../Apis/apis";
-import {QuestionRequest} from "../../Interfaces/request";
+import { QuestionRequest } from "../../Interfaces/request";
 import { Message } from "../../Interfaces/interface";
 
 const HomeContainer: React.FC = () => {
@@ -16,7 +16,7 @@ const HomeContainer: React.FC = () => {
     { id: 2, message: "무엇을 도와드릴까요?", sender: "bot" },
   ]);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const {
     isOpen: isLoginModalOpen,
     onOpen: onLoginModalOpen,
@@ -40,13 +40,11 @@ const HomeContainer: React.FC = () => {
     } else {
       setError("");
       try {
-        const response = await userApi.login({ nickname: id, password});
-        console.log(response);
+        const response = await userApi.login({ nickname: id, password });
+        console.log(response.data.token);
+        localStorage.setItem("token", response.data.token);
         context.setIsLoggedIn(true);
         context.setUserId(id);
-        localStorage.setItem('token', response.data.token as string);
-        console.log("메세지" + response.data.message);
-        console.log("안녕" + localStorage.getItem('token'));
         onLoginModalClose();
       } catch (error) {
         console.error("API 호출 오류:", error);
@@ -58,8 +56,7 @@ const HomeContainer: React.FC = () => {
   const onLogout = () => {
     context.setIsLoggedIn(false);
     context.setUserId(null);
-    // 여기에 로그아웃 관련 추가 로직을 구현할 수 있습니다.
-    // 예: 토큰 제거, 서버에 로그아웃 요청 등
+    localStorage.removeItem("token");
   };
 
   const onClickFair = () => {
@@ -114,16 +111,20 @@ const HomeContainer: React.FC = () => {
         const response = await questionApi.askQuestion(request);
         const { data } = response;
         console.log(data);
-        
+
         const newMessages: Message[] = [
-          { id: chatHistory.length + 2, message: data.answer.text, sender: "bot" },
+          {
+            id: chatHistory.length + 2,
+            message: data.answer.text,
+            sender: "bot",
+          },
         ];
 
         if (data.answer.image) {
           newMessages.push({
             id: chatHistory.length + 3,
             message: "이미지가 생성되었습니다",
-            image: data.answer.image, // null 대신 string | undefined를 사용
+            image: data.answer.image,
             sender: "bot",
           });
         }
@@ -132,11 +133,11 @@ const HomeContainer: React.FC = () => {
           questionId: data.questionId,
           questionContent: inputValue,
           answerContent: data.answer.text,
-          nationality: "KR", // 예시 데이터
-          grade: 1, // 예시 데이터
+          nationality: "KR",
+          grade: 1,
           imageUrl: data.answer.image || "",
         });
-        
+
         if (nftResponse.data.nft) {
           newMessages.push({
             id: chatHistory.length + 4,
@@ -172,9 +173,8 @@ const HomeContainer: React.FC = () => {
       inputValue={inputValue}
       onInputChange={handleInputChange}
       onSendMessage={handleSendMessage}
-      isOpen={isOpen}
-      onOpen={onOpen}
-      onClose={onClose}
+      isSidebarOpen={isSidebarOpen}
+      onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
       messageEndRef={messageEndRef}
       isLoginModalOpen={isLoginModalOpen}
       onLoginModalOpen={onLoginModalOpen}

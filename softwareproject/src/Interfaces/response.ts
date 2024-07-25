@@ -4,7 +4,7 @@ export interface RegisterResponse {
 
 export interface LoginResponse {
     message: string;
-    token?: string; // OAuth 여부에 따라 JWT 토큰이 반환될 수 있음
+    token: string;
 }
 
 export interface QuestionResponse {

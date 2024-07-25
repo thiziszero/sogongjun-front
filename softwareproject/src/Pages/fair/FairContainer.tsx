@@ -79,9 +79,8 @@ const FairContainer: React.FC = () => {
         console.log(response);
         context.setIsLoggedIn(true);
         context.setUserId(id);
-        localStorage.setItem('token', response.data.token as string);
         console.log("메세지" + response.data.message);
-        console.log("안녕" + localStorage.getItem('token'));
+        console.log("안녕" + localStorage.getItem('Authorization'));
         onLoginModalClose();
       } catch (error) {
         console.error("API 호출 오류:", error);

@@ -35,6 +35,10 @@ const RegisterContainer: React.FC = () => {
     }
   };
 
+  const clickImage = () => {
+    navigate(-1);
+  }
+
   const handlePasswordChange = (value: string) => {
     setPassword(value);
     if (error) {
@@ -75,6 +79,7 @@ const RegisterContainer: React.FC = () => {
       setGrade={handleGradeChange}
       error={error}
       onRegister={onRegister}
+      clickImage={clickImage}
     />
   );
 };
