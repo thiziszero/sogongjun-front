@@ -79,8 +79,10 @@ const Sidebar: React.FC<{
       zIndex={20}
       transition="0.3s"
     >
-      <VStack align="stretch" p={4} spacing={4}>
-        <Heading size="md">메뉴</Heading>
+      <VStack align="stretch" p={4} spacing={4} height="100%">
+        <Box textAlign={"center"}>
+          <Heading size="md">Navigator</Heading>
+        </Box>
         <Button variant="ghost" onClick={onClickFair}>
           전시회
         </Button>
@@ -94,6 +96,7 @@ const Sidebar: React.FC<{
             로그인
           </Button>
         )}
+        <Spacer/>
         <Button onClick={onClose}>닫기</Button>
       </VStack>
     </Box>
