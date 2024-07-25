@@ -3,6 +3,7 @@ import { HomeContainer } from "../Pages/home";
 import { LoginContainer } from "../Pages/login";
 import { RegisterContainer } from "../Pages/register";
 import { FairContainer } from "../Pages/fair";
+import { MypageContainer } from "../Pages/mypage";
 
 export const routes: RouteObject[] = [
   {
@@ -25,4 +26,8 @@ export const routes: RouteObject[] = [
     path: "*",
     element: <HomeContainer />,
   },
+  {
+    path: "mypage",
+    element: <MypageContainer />,
+  }
 ];

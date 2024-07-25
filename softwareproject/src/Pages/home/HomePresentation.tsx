@@ -55,6 +55,7 @@ interface HomePresentationProps {
   onClickFair: () => void;
   isLoggedIn: boolean;
   onLogout: () => void;
+  onClickMypage: () => void;
 }
 
 const Sidebar: React.FC<{
@@ -64,7 +65,16 @@ const Sidebar: React.FC<{
   isLoggedIn: boolean;
   onLogout: () => void;
   onLoginModalOpen: () => void;
-}> = ({ isOpen, onClose, onClickFair, isLoggedIn, onLogout, onLoginModalOpen }) => {
+  onClickMypage: () => void;
+}> = ({
+  isOpen,
+  onClose,
+  onClickFair,
+  isLoggedIn,
+  onLogout,
+  onLoginModalOpen,
+  onClickMypage,
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -72,21 +82,26 @@ const Sidebar: React.FC<{
       position="fixed"
       left={0}
       top={0}
-      width="320px"
+      width="220px"
       height="100%"
-      bg="white"
+      bg="gray.100"
       boxShadow="2xl"
       zIndex={20}
       transition="0.3s"
     >
       <VStack align="stretch" p={4} spacing={4} height="100%">
-        <Box textAlign={"center"}>
+        <Flex justifyContent="flex-end" alignItems="center">
           <Heading size="md">Navigator</Heading>
-        </Box>
+          <Spacer />
+          <Button onClick={onClose} variant="ghost" size="sm">
+            ✕
+          </Button>
+        </Flex>
+        <br></br>
         <Button variant="ghost" onClick={onClickFair}>
           전시회
         </Button>
-        {isLoggedIn && <Button variant="ghost">마이페이지</Button>}
+        {isLoggedIn && <Button variant="ghost" onClick={onClickMypage}>마이페이지</Button>}
         {isLoggedIn ? (
           <Button variant="ghost" onClick={onLogout}>
             로그아웃
@@ -96,7 +111,7 @@ const Sidebar: React.FC<{
             로그인
           </Button>
         )}
-        <Spacer/>
+        <Spacer />
         <Button onClick={onClose}>닫기</Button>
       </VStack>
     </Box>
@@ -119,19 +134,25 @@ const HomePresentation: React.FC<HomePresentationProps> = (props) => {
         isLoggedIn={props.isLoggedIn}
         onLogout={props.onLogout}
         onLoginModalOpen={props.onLoginModalOpen}
+        onClickMypage={props.onClickMypage}
       />
       <Flex
         flex={1}
         direction="column"
-        ml={props.isSidebarOpen ? "320px" : "0"}
+        ml={props.isSidebarOpen ? "220px" : "0"}
         transition="margin-left 0.3s"
       >
         {/* Header */}
         <Flex p={4} bg="gray.100" alignItems="center">
-          <Heading size="md">MultiLearn❤️</Heading>
-          <Button ml={2} onClick={props.onToggleSidebar}>
-            메뉴
+          <Button
+            onClick={props.onToggleSidebar}
+            mr={2}
+            variant="ghost"
+            size="sm"
+          >
+            ☰
           </Button>
+          <Heading size="md">MultiLearn❤️</Heading>
           <Spacer />
           <Button variant="ghost" onClick={props.onClickFair}>
             전시회
@@ -148,7 +169,13 @@ const HomePresentation: React.FC<HomePresentationProps> = (props) => {
         </Flex>
 
         {/* Chat Area */}
-        <VStack flex={1} overflowY="auto" p={4} spacing={4} alignItems="stretch">
+        <VStack
+          flex={1}
+          overflowY="auto"
+          p={4}
+          spacing={4}
+          alignItems="stretch"
+        >
           {props.chatHistory.map((msg) => (
             <Flex
               key={msg.id}
@@ -185,7 +212,10 @@ const HomePresentation: React.FC<HomePresentationProps> = (props) => {
         </Flex>
 
         {/* Login Modal */}
-        <Modal isOpen={props.isLoginModalOpen} onClose={props.onLoginModalClose}>
+        <Modal
+          isOpen={props.isLoginModalOpen}
+          onClose={props.onLoginModalClose}
+        >
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>로그인</ModalHeader>

@@ -42,10 +42,14 @@ const HomeContainer: React.FC = () => {
       try {
         const response = await userApi.login({ nickname: id, password });
         console.log(response.data.token);
+        localStorage.clear()
+        localStorage.setItem("id", id);
         localStorage.setItem("token", response.data.token);
+        console.log(localStorage.getItem("token"));
         context.setIsLoggedIn(true);
         context.setUserId(id);
         onLoginModalClose();
+        alert("로그인 성공");
       } catch (error) {
         console.error("API 호출 오류:", error);
         setError("아이디와 패스워드를 다시 확인해주세요");
@@ -61,6 +65,10 @@ const HomeContainer: React.FC = () => {
 
   const onClickFair = () => {
     navigate("/fair");
+  };
+
+  const onClickMypage = () => {
+    navigate("/mypage");
   };
 
   const onCreate = () => {
@@ -163,6 +171,20 @@ const HomeContainer: React.FC = () => {
   };
 
   useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === "Enter" && isLoginModalOpen) {
+        onLogin();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [isLoginModalOpen, id, password]);
+
+  useEffect(() => {
     scrollToBottom();
   }, [chatHistory, scrollToBottom]);
 
@@ -190,6 +212,7 @@ const HomeContainer: React.FC = () => {
       onFindPassword={onFindPassword}
       isLoggedIn={context.isLoggedIn}
       onLogout={onLogout}
+      onClickMypage={onClickMypage}
     />
   );
 };

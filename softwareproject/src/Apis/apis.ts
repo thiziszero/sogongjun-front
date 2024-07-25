@@ -32,7 +32,7 @@ const nftApiInstance = axios.create({
 userApiInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
+    config.headers['Authorization'] = `${token}`;
   }
   return config;
 }, (error) => {
@@ -43,7 +43,7 @@ userApiInstance.interceptors.request.use((config) => {
 nftApiInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`;
+    config.headers['Authorization'] = `${token}`;
   }
   return config;
 }, (error) => {
