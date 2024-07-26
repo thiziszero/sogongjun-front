@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import FairPresentation from "./FairPresentation";
 import { useNavigate } from "react-router-dom";
 import { useDisclosure } from "@chakra-ui/react";
@@ -16,8 +16,11 @@ const FairContainer: React.FC = () => {
   const [selectedNft, setSelectedNft] = useState<NFTListResponse["nfts"][0] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPopularNft, setSelectedPopularNft] = useState<NFTData | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>(""); // Add state for search query
   const [searchResults, setSearchResults] = useState<NFTListResponse["nfts"]>([]); // Add state for search results
+  const [selectedGrade, setSelectedGrade] = useState<string>("");
+  const [selectedNationality, setSelectedNationality] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filteredNfts, setFilteredNfts] = useState<NFTListResponse["nfts"]>(nfts); // State for filtered NFTs
 
   const {
     isOpen: isLoginModalOpen,
@@ -28,6 +31,17 @@ const FairContainer: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [loginError, setLoginError] = useState<string>("");
 
+  const grades = useMemo(() => {
+    const gradeSet = new Set(nfts.map((nft) => nft.grade));    
+    return Array.from(gradeSet)
+      .map(grade => parseInt(grade, 10))
+      .filter(grade => !isNaN(grade))
+      .sort((a, b) => a - b)
+      .map(grade => grade.toString());
+  }, [nfts]);
+
+  const nationalities = useMemo(() => Array.from(new Set(nfts.map((nft) => nft.nationality))), [nfts]);
+
   useEffect(() => {
     fetchNFTs();
   }, []);
@@ -36,7 +50,9 @@ const FairContainer: React.FC = () => {
     try {
       const response = await nftApi.getNFTList();
       const popular_response = await nftApi.getNFTPopularList();
-      console.log("Popular NFTs:", popular_response.data);
+      //console.log("인기", popular_response);
+      //console.log("일반", response);
+      setFilteredNfts(response.data.nfts);
       setNfts(response.data.nfts);
       setPopularNFTs(Array.isArray(popular_response.data) ? popular_response.data : []);
       setIsLoading(false);
@@ -65,13 +81,32 @@ const FairContainer: React.FC = () => {
   };
 
   const handleSearch = async () => {
+    if (!searchQuery && !selectedNationality && !selectedGrade) {
+      setFilteredNfts(nfts);
+      return;
+    }
+
     try {
-      const response = await nftApi.searchNFTs({ query: searchQuery });
-      setSearchResults(response.data.nfts);
-    } catch (err) {
-      setError("검색 결과를 불러오는 데 실패했습니다.");
+      const response = await nftApi.searchNFTs({
+        query: searchQuery,
+        nationality: selectedNationality,
+        grade: selectedGrade,
+      });
+      console.log("API response:", response);
+  
+      const filteredResults = nfts.filter((nft) => {
+        const gradeMatch = selectedGrade ? nft.grade === selectedGrade : true;
+        const nationalityMatch = selectedNationality ? nft.nationality === selectedNationality : true;
+        const queryMatch = searchQuery ? nft.questionContent.includes(searchQuery) || nft.answerContent.includes(searchQuery) : true;
+        return gradeMatch && nationalityMatch && queryMatch;
+      });
+  
+      setFilteredNfts(filteredResults);
+    } catch (error) {
+      console.error("Error searching NFTs:", error);
     }
   };
+  
 
   const onBack = () => {
     navigate('/');
@@ -141,9 +176,17 @@ const FairContainer: React.FC = () => {
       selectedPopularNft={selectedPopularNft}
       onPopularNftClick={handlePopularNftClick}
       onClosePopularNftModal={handleClosePopularNftModal}
-      searchQuery={searchQuery} // Pass searchQuery to Presentation component
-      setSearchQuery={setSearchQuery} // Pass setSearchQuery to Presentation component
-      onSearch={handleSearch} // Pass handleSearch to Presentation component
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
+      onSearch={handleSearch}
+      grades={grades}
+      nationalities={nationalities}
+      selectedGrade={selectedGrade}
+      setSelectedGrade={setSelectedGrade}
+      selectedNationality={selectedNationality}
+      setSelectedNationality={setSelectedNationality}
+      filteredNfts={filteredNfts}
+      setfilteredNfts={setFilteredNfts}
     />
   );
 };

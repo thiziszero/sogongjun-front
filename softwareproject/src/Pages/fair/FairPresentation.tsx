@@ -23,6 +23,9 @@ import {
   FormLabel,
   FormErrorMessage,
   Spacer,
+  HStack,
+  Select,
+  Grid,
 } from "@chakra-ui/react";
 import { NFTListResponse, NFTData } from "../../Interfaces/response";
 import LoadingPresentation from "../../Components/Loading";
@@ -56,6 +59,14 @@ interface FairPresentationProps {
   searchQuery: string; // Add searchQuery prop
   setSearchQuery: (value: string) => void; // Add setSearchQuery prop
   onSearch: () => void; // Add onSearch prop
+  grades: string[];
+  nationalities: string[];
+  selectedGrade: string;
+  setSelectedGrade: (value: string) => void;
+  selectedNationality: string;
+  setSelectedNationality: (value: string) => void;
+  filteredNfts: NFTListResponse["nfts"];
+  setfilteredNfts: (value: NFTListResponse["nfts"]) => void;
 }
 
 const FairPresentation = (props: FairPresentationProps) => (
@@ -78,9 +89,7 @@ const FairPresentation = (props: FairPresentationProps) => (
           MultiLearn 전시회
         </Heading>
         <Spacer />
-        <Box display="flex" alignItems="center">
-        </Box>
-        <Button onClick={props.onBack} ml={4}>질문하기</Button>
+        <Button onClick={props.onBack}>질문하기</Button>
         {props.isLoggedIn ? (
           <Button ml="auto" onClick={props.onLogout}>
             로그아웃
@@ -95,7 +104,10 @@ const FairPresentation = (props: FairPresentationProps) => (
       {/* Add padding to account for the fixed header */}
       <Box mt="80px">
         {/* Login Modal */}
-        <Modal isOpen={props.isLoginModalOpen} onClose={props.onLoginModalClose}>
+        <Modal
+          isOpen={props.isLoginModalOpen}
+          onClose={props.onLoginModalClose}
+        >
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>로그인</ModalHeader>
@@ -206,11 +218,86 @@ const FairPresentation = (props: FairPresentationProps) => (
           <Heading size="md" mb={4}>
             전체 NFT 목록
           </Heading>
-          <FilteredNFTGrid nfts={props.nfts} onNftClick={props.onNftClick} />
+          <VStack spacing={4} align="stretch">
+            <HStack spacing={4}>
+              <Select
+                placeholder="학년을 선택하세요"
+                value={props.selectedGrade}
+                onChange={(e) => props.setSelectedGrade(e.target.value)}
+              >
+                {props.grades.map((grade: any) => (
+                  <option key={grade} value={grade}>
+                    {grade}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                placeholder="국적을 선택하세요"
+                value={props.selectedNationality}
+                onChange={(e) => props.setSelectedNationality(e.target.value)}
+              >
+                {props.nationalities.map((nationality) => (
+                  <option key={nationality} value={nationality}>
+                    {nationality}
+                  </option>
+                ))}
+              </Select>
+              <Input
+                placeholder="검색 내용을 입력하세요"
+                value={props.searchQuery}
+                onChange={(e) => props.setSearchQuery(e.target.value)}
+              />
+              <Button onClick={props.onSearch}>검색</Button>
+            </HStack>
+            <Grid
+              templateColumns="repeat(auto-fill, minmax(250px, 1fr))"
+              gap={6}
+            >
+              {props.filteredNfts.map((nft: NFTListResponse["nfts"][0]) => (
+                <Box
+                  key={nft.tokenId}
+                  borderWidth={1}
+                  borderRadius="lg"
+                  overflow="hidden"
+                  cursor="pointer"
+                  onClick={() => props.onNftClick(nft)}
+                  maxW="250px"
+                  maxH="500px"
+                >
+                  <Image
+                    src={nft.imageUrl}
+                    alt={nft.questionContent}
+                    objectFit="cover"
+                    w="100%"
+                    h="300px"
+                  />
+                  <Box borderTopWidth="1px" borderTopColor="gray.200" mt={2} />
+                  <Box p={4}>
+                    <Text fontWeight="bold" noOfLines={2} textAlign="left">
+                      {nft.questionContent}
+                    </Text>
+                    <Text fontSize="sm" color="gray.500">
+                      학년: {nft.grade}
+                    </Text>
+                    <Text fontSize="sm" color="gray.500">
+                      국적: {nft.nationality}
+                    </Text>
+                    <Text fontSize="sm" color="gray.500">
+                      Token ID: {nft.tokenId}
+                    </Text>
+                  </Box>
+                </Box>
+              ))}
+            </Grid>
+          </VStack>
         </Box>
 
         {/* NFT Detail Modal */}
-        <Modal isOpen={props.isModalOpen} onClose={props.onCloseModal} size="xl">
+        <Modal
+          isOpen={props.isModalOpen}
+          onClose={props.onCloseModal}
+          size="xl"
+        >
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>NFT 상세 정보</ModalHeader>
