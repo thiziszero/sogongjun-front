@@ -208,11 +208,6 @@ const HomeContainer: React.FC = () => {
   }, [isLoginModalOpen, id, password]);
 
   useEffect(() => {
-    /* 디버그 코드 */
-    context.setAccessToken("abc");
-    context.setIsLoggedIn(true);
-
-    /* 디버그 코드 */
     scrollToBottom();
   }, [chatHistory, scrollToBottom]);
 

@@ -50,8 +50,8 @@ const FairContainer: React.FC = () => {
     try {
       const response = await nftApi.getNFTList();
       const popular_response = await nftApi.getNFTPopularList();
-      //console.log("인기", popular_response);
-      //console.log("일반", response);
+      console.log("인기", popular_response);
+      console.log("일반", response);
       setFilteredNfts(response.data.nfts);
       setNfts(response.data.nfts);
       setPopularNFTs(Array.isArray(popular_response.data) ? popular_response.data : []);
