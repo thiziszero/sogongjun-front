@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
 interface AppContextType {
   loading: boolean;
@@ -9,6 +9,7 @@ interface AppContextType {
   setUserId: (userId: string | null) => void;
   accessToken: string | null;
   setAccessToken: (token: string | null) => void;
+  logout: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -18,6 +19,31 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const initializeAuth = () => {
+      const storedToken = localStorage.getItem("token");
+      const storedUserId = localStorage.getItem("id");
+      
+      if (storedToken && storedUserId) {
+        setAccessToken(storedToken);
+        setUserId(storedUserId);
+        setIsLoggedIn(true);
+      }
+      
+      setLoading(false);
+    };
+
+    initializeAuth();
+  }, []);
+
+  const logout = () => {
+    setIsLoggedIn(false);
+    setUserId(null);
+    setAccessToken(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("id");
+  };
 
   return (
     <AppContext.Provider value={{
@@ -29,6 +55,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setUserId,
       accessToken,
       setAccessToken,
+      logout,
     }}>
       {children}
     </AppContext.Provider>

@@ -41,13 +41,11 @@ const HomeContainer: React.FC = () => {
       setError("");
       try {
         const response = await userApi.login({ nickname: id, password });
-        console.log(response.data.token);
-        localStorage.clear()
         localStorage.setItem("id", id);
         localStorage.setItem("token", response.data.token);
-        console.log(localStorage.getItem("token"));
         context.setIsLoggedIn(true);
         context.setUserId(id);
+        context.setAccessToken(response.data.token);
         onLoginModalClose();
         alert("로그인 성공");
       } catch (error) {
@@ -58,9 +56,7 @@ const HomeContainer: React.FC = () => {
   };
 
   const onLogout = () => {
-    context.setIsLoggedIn(false);
-    context.setUserId(null);
-    localStorage.removeItem("token");
+    context.logout();
   };
 
   const onClickFair = () => {

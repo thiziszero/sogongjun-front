@@ -79,28 +79,27 @@ const FairContainer: React.FC = () => {
 
   const onLogin = async () => {
     if (!id || !password) {
-      setLoginError("아이디/패스워드를 입력해주세요");
+      setError("아이디/패스워드를 입력해주세요");
     } else {
-      setLoginError("");
+      setError("");
       try {
         const response = await userApi.login({ nickname: id, password });
-        console.log(response);
+        localStorage.setItem("id", id);
+        localStorage.setItem("token", response.data.token);
         context.setIsLoggedIn(true);
         context.setUserId(id);
-        console.log("메세지" + response.data.message);
-        console.log("안녕" + localStorage.getItem('Authorization'));
+        context.setAccessToken(response.data.token);
         onLoginModalClose();
+        alert("로그인 성공");
       } catch (error) {
         console.error("API 호출 오류:", error);
-        setLoginError("아이디와 패스워드를 다시 확인해주세요");
+        setError("아이디와 패스워드를 다시 확인해주세요");
       }
     }
   };
 
   const onLogout = () => {
-    context.setIsLoggedIn(false);
-    context.setUserId(null);
-    // 추가 로그아웃 로직 구현 (예: 토큰 제거)
+    context.logout();
   };
 
   const handleIdChange = (value: string) => {
