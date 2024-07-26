@@ -53,6 +53,9 @@ interface FairPresentationProps {
   selectedPopularNft: NFTData | null;
   onPopularNftClick: (nft: NFTData) => void;
   onClosePopularNftModal: () => void;
+  searchQuery: string; // Add searchQuery prop
+  setSearchQuery: (value: string) => void; // Add setSearchQuery prop
+  onSearch: () => void; // Add onSearch prop
 }
 
 const FairPresentation = (props: FairPresentationProps) => (
@@ -75,7 +78,9 @@ const FairPresentation = (props: FairPresentationProps) => (
           MultiLearn 전시회
         </Heading>
         <Spacer />
-        <Button onClick={props.onBack}>질문하기</Button>
+        <Box display="flex" alignItems="center">
+        </Box>
+        <Button onClick={props.onBack} ml={4}>질문하기</Button>
         {props.isLoggedIn ? (
           <Button ml="auto" onClick={props.onLogout}>
             로그아웃

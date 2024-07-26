@@ -9,7 +9,7 @@ interface SearchResult {
 }
 
 interface SearchComponentProps {
-  onSearchResults: (results: SearchResult[]) => void;
+  onSearchResults?: (results: SearchResult[]) => void;
 }
 
 const dummyData: SearchResult[] = [
@@ -37,6 +37,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ onSearchResults }) =>
   const [query, setQuery] = useState<string>('');
   const [nationality, setNationality] = useState<string>('');
   const [grade, setGrade] = useState<string>('');
+  const [results, setResults] = useState<SearchResult[]>([]);
 
   const handleSearch = () => {
     const filteredResults = dummyData.filter(
@@ -45,7 +46,10 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ onSearchResults }) =>
         (!nationality || item.nationality.toLowerCase() === nationality.toLowerCase()) &&
         (!grade || item.grade.toString() === grade)
     );
-    onSearchResults(filteredResults);
+    setResults(filteredResults);
+    if (onSearchResults) {
+      onSearchResults(filteredResults);
+    }
   };
 
   return (
@@ -76,6 +80,20 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ onSearchResults }) =>
         </Select>
         <Button onClick={handleSearch} colorScheme="blue">검색</Button>
       </HStack>
+      <VStack spacing={4}>
+        {results.map((result, index) => (
+          <Box key={index} p={4} borderWidth="1px" borderRadius="lg">
+            <HStack spacing={4}>
+              <Image src={result.image} alt={result.questionContent} boxSize="100px" />
+              <VStack align="start">
+                <Text>Nationality: {result.nationality}</Text>
+                <Text>Grade: {result.grade}</Text>
+                <Text>Question: {result.questionContent}</Text>
+              </VStack>
+            </HStack>
+          </Box>
+        ))}
+      </VStack>
     </Box>
   );
 };

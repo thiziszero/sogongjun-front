@@ -97,5 +97,9 @@ export const nftApi = {
 
   getNFTPopularList: async (): Promise<AxiosResponse<PopularNFTResponse>> => {
     return nftApiInstance.get(`/api/top3-nft`);
-  }
+  },
+
+  searchNFTs: async (params: { query: string; nationality?: string; grade?: string }): Promise<AxiosResponse<NFTListResponse>> => {
+    return nftApiInstance.get("/api/search", { params });
+  },
 };

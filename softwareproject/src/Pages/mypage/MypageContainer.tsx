@@ -3,9 +3,9 @@ import { useAppContext } from "../../AppContext";
 import MypagePresentation from "./MypagePresentation";
 
 const MypageContainer: React.FC = () => {
-  const { userId } = useAppContext();
+  const context = useAppContext();
 
-  return <MypagePresentation userId={userId} />;
+  return <MypagePresentation userId={context.userId} />;
 };
 
 export default MypageContainer;

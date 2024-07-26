@@ -4,10 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDisclosure } from "@chakra-ui/react";
 import { useAppContext } from "../../AppContext";
 import { nftApi, userApi } from "../../Apis/apis";
-import {
-  NFTListResponse,
-  NFTData,
-} from "../../Interfaces/response";
+import { NFTListResponse, NFTData } from "../../Interfaces/response";
 
 const FairContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -19,6 +16,8 @@ const FairContainer: React.FC = () => {
   const [selectedNft, setSelectedNft] = useState<NFTListResponse["nfts"][0] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPopularNft, setSelectedPopularNft] = useState<NFTData | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>(""); // Add state for search query
+  const [searchResults, setSearchResults] = useState<NFTListResponse["nfts"]>([]); // Add state for search results
 
   const {
     isOpen: isLoginModalOpen,
@@ -63,6 +62,15 @@ const FairContainer: React.FC = () => {
 
   const handleClosePopularNftModal = () => {
     setSelectedPopularNft(null);
+  };
+
+  const handleSearch = async () => {
+    try {
+      const response = await nftApi.searchNFTs({ query: searchQuery });
+      setSearchResults(response.data.nfts);
+    } catch (err) {
+      setError("검색 결과를 불러오는 데 실패했습니다.");
+    }
   };
 
   const onBack = () => {
@@ -111,7 +119,7 @@ const FairContainer: React.FC = () => {
 
   return (
     <FairPresentation
-      nfts={nfts}
+      nfts={searchResults.length > 0 ? searchResults : nfts} // Display search results if available
       popularNFTs={popularNFTs}
       isLoading={isLoading}
       error={error}
@@ -134,6 +142,9 @@ const FairContainer: React.FC = () => {
       selectedPopularNft={selectedPopularNft}
       onPopularNftClick={handlePopularNftClick}
       onClosePopularNftModal={handleClosePopularNftModal}
+      searchQuery={searchQuery} // Pass searchQuery to Presentation component
+      setSearchQuery={setSearchQuery} // Pass setSearchQuery to Presentation component
+      onSearch={handleSearch} // Pass handleSearch to Presentation component
     />
   );
 };

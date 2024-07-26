@@ -18,6 +18,7 @@ export interface QuestionRequest {
 
 // 답변을 이미지로 변환 요청 및 응답
 export interface AnswerToImageRequest {
+    questionId: number;
     answerText: string;
 }
 

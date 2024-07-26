@@ -8,8 +8,10 @@ import {
   Input,
   VStack,
   HStack,
+  Button,
 } from "@chakra-ui/react";
 import { NFTListResponse } from "../Interfaces/response";
+import { nftApi } from "../Apis/apis"; // Import the nftApi
 
 interface FilteredNFTGridProps {
   nfts: NFTListResponse["nfts"];
@@ -20,6 +22,7 @@ const FilteredNFTGrid: React.FC<FilteredNFTGridProps> = ({ nfts, onNftClick }) =
   const [selectedGrade, setSelectedGrade] = useState<string>("");
   const [selectedNationality, setSelectedNationality] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filteredNfts, setFilteredNfts] = useState<NFTListResponse["nfts"]>(nfts); // State for filtered NFTs
 
   const grades = useMemo(() => {
     const gradeSet = new Set(nfts.map((nft) => nft.grade));
@@ -32,16 +35,33 @@ const FilteredNFTGrid: React.FC<FilteredNFTGridProps> = ({ nfts, onNftClick }) =
 
   const nationalities = useMemo(() => Array.from(new Set(nfts.map((nft) => nft.nationality))), [nfts]);
 
-  const filteredNfts = useMemo(() => {
-    return nfts.filter((nft) => {
-      const gradeMatch = selectedGrade ? nft.grade === selectedGrade : true;
-      const nationalityMatch = selectedNationality ? nft.nationality === selectedNationality : true;
-      const searchMatch = searchQuery
-        ? nft.questionContent.toLowerCase().includes(searchQuery.toLowerCase())
-        : true;
-      return gradeMatch && nationalityMatch && searchMatch;
-    });
-  }, [nfts, selectedGrade, selectedNationality, searchQuery]);
+  const handleSearch = async () => {
+    try {
+      const response = await nftApi.searchNFTs({
+        query: searchQuery,
+        nationality: selectedNationality,
+        grade: selectedGrade,
+      });
+      console.log("API response:", response.data); // Log the API response
+  
+      if (response.data && Array.isArray(response.data.nfts)) {
+        const searchedNfts = response.data.nfts;
+  
+        // Further filter based on selectedGrade and selectedNationality
+        const filteredResults = searchedNfts.filter((nft: any) => {
+          const gradeMatch = selectedGrade ? nft.grade === selectedGrade : true;
+          const nationalityMatch = selectedNationality ? nft.nationality === selectedNationality : true;
+          return gradeMatch && nationalityMatch;
+        });
+  
+        setFilteredNfts(filteredResults);
+      } else {
+        console.error("Unexpected API response structure:", response.data);
+      }
+    } catch (error) {
+      console.error("Error searching NFTs:", error);
+    }
+  };
 
   return (
     <VStack spacing={4} align="stretch">
@@ -73,6 +93,7 @@ const FilteredNFTGrid: React.FC<FilteredNFTGridProps> = ({ nfts, onNftClick }) =
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
+        <Button onClick={handleSearch}>검색</Button>
       </HStack>
       <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6}>
         {filteredNfts.map((nft) => (

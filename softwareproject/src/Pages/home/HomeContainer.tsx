@@ -4,7 +4,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import { useAppContext } from "../../AppContext";
 import HomePresentation from "./HomePresentation";
 import { userApi, questionApi, nftApi } from "../../Apis/apis";
-import { QuestionRequest } from "../../Interfaces/request";
+import { QuestionRequest, AnswerToImageRequest } from "../../Interfaces/request";
 import { Message } from "../../Interfaces/interface";
 
 const HomeContainer: React.FC = () => {
@@ -117,33 +117,41 @@ const HomeContainer: React.FC = () => {
       try {
         const request: QuestionRequest = { content: inputValue };
         const response = await questionApi.askQuestion(request);
-        const { data } = response;
-        console.log(data);
+
+        const questionId = response.data.questionId;
+        const answerText = response.data.answer.text;
+
+        // Step 2: Convert the answer to image using the questionId
+        const answerToImageRequest: AnswerToImageRequest = {
+          questionId,
+          answerText
+        };
+        const answerToImageResponse = await questionApi.convertAnswerToImage(answerToImageRequest); // { questionId, img url }
 
         const newMessages: Message[] = [
           {
             id: chatHistory.length + 2,
-            message: data.answer.text,
+            message: response.data.answer.text,
             sender: "bot",
           },
         ];
 
-        if (data.answer.image) {
+        if (answerToImageResponse.data.image) {
           newMessages.push({
             id: chatHistory.length + 3,
             message: "이미지가 생성되었습니다",
-            image: data.answer.image,
+            image: answerToImageResponse.data.image,
             sender: "bot",
           });
         }
 
         const nftResponse = await nftApi.createNFT({
-          questionId: data.questionId,
+          questionId: response.data.questionId,
           questionContent: inputValue,
-          answerContent: data.answer.text,
+          answerContent: response.data.answer.text,
           nationality: "KR",
           grade: 1,
-          imageUrl: data.answer.image || "",
+          imageUrl: answerToImageResponse.data.image || "",
         });
 
         if (nftResponse.data.nft) {
