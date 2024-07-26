@@ -111,63 +111,77 @@ const HomeContainer: React.FC = () => {
       setInputValue("");
   
       try {
-        // Step 1: Ask the question and get the questionId and answer text
+        // Step 1: 질문 -> 답변 { questionid, answer }
         const questionRequest: QuestionRequest = { content: inputValue };
         const questionResponse = await questionApi.askQuestion(questionRequest);
         const { questionId, answer } = questionResponse.data;
   
-        // Step 2: Convert the answer to image using the questionId and answer text
+        // 답변 메시지 추가
+        setChatHistory((prev) => [
+          ...prev,
+          {
+            id: prev.length + 1,
+            message: answer.text,
+            sender: "bot",
+          },
+        ]);
+
+        // 이미지 생성 중 메시지 추가
+        setChatHistory((prev) => [
+          ...prev,
+          {
+            id: prev.length + 1,
+            message: "이미지가 생성 중입니다.",
+            sender: "bot",
+            loadingImage: true,
+          },
+        ]);
+
+        // Step 2: 답변 -> 이미지 { questionId, imageURL }
         const answerToImageRequest: AnswerToImageRequest = {
           questionId,
           answerText: answer.text,
         };
         const answerToImageResponse = await questionApi.convertAnswerToImage(answerToImageRequest);
   
-        // Prepare the new messages with the answer text
-        const newMessages: Message[] = [
+        // 이미지 생성 완료 메시지로 업데이트
+        setChatHistory((prev) => [
+          ...prev.filter(msg => !msg.loadingImage),
           {
-            id: chatHistory.length + 2,
-            message: answer.text,
-            sender: "bot",
-          },
-        ];
-  
-        // If an image is generated, add it to the messages
-        if (answerToImageResponse.data.image) {
-          newMessages.push({
-            id: chatHistory.length + 3,
+            id: prev.length + 1,
             message: "이미지가 생성되었습니다",
             image: answerToImageResponse.data.image,
             sender: "bot",
-          });
-        }
+          },
+        ]);
   
-        // Step 3: Create NFT using the questionId, question content, answer content, and image URL
+        // Step 3: Create NFT
         const createNFTRequest: CreateNFTRequest = {
           questionId,
           questionContent: inputValue,
           answerContent: answer.text,
-          nationality: "KR",
-          grade: 1,
+          nationality: "South Korea",
+          grade: 11,
           imageUrl: answerToImageResponse.data.image || "",
         };
         const nftResponse = await nftApi.createNFT(createNFTRequest);
   
         // If NFT is successfully created, display the tokenId
         if (nftResponse.data.nft) {
-          newMessages.push({
-            id: chatHistory.length + 4,
-            message: `NFT가 생성되었습니다. Token ID: ${nftResponse.data.nft.tokenId}`,
-            sender: "bot",
-          });
+          setChatHistory((prev) => [
+            ...prev,
+            {
+              id: prev.length + 1,
+              message: `NFT가 생성되었습니다. Token ID: ${nftResponse.data.nft.tokenId}`,
+              sender: "bot",
+            },
+          ]);
         }
   
-        // Update the chat history with the new messages
-        setChatHistory((prev) => [...prev, ...newMessages]);
       } catch (error) {
         console.error("API 호출 오류:", error);
         setChatHistory((prev) => [
-          ...prev,
+          ...prev.filter(msg => !msg.loadingImage),
           {
             id: prev.length + 1,
             message: "죄송합니다. 오류가 발생했습니다.",

@@ -170,34 +170,39 @@ const HomePresentation: React.FC<HomePresentationProps> = (props) => {
 
         {/* Chat Area */}
         <VStack
-          flex={1}
-          overflowY="auto"
-          p={4}
-          spacing={4}
-          alignItems="stretch"
-        >
-          {props.chatHistory.map((msg) => (
-            <Flex
-              key={msg.id}
-              justifyContent={msg.sender === "user" ? "flex-end" : "flex-start"}
+        flex={1}
+        overflowY="auto"
+        p={4}
+        spacing={4}
+        alignItems="stretch"
+      >
+        {props.chatHistory.map((msg) => (
+          <Flex
+            key={msg.id}
+            justifyContent={msg.sender === "user" ? "flex-end" : "flex-start"}
+          >
+            <Box
+              alignSelf={msg.sender === "user" ? "flex-end" : "flex-start"}
+              bg={msg.sender === "user" ? "blue.100" : "gray.100"}
+              borderRadius="md"
+              p={2}
+              maxWidth="80%"
             >
-              <Box
-                alignSelf={msg.sender === "user" ? "flex-end" : "flex-start"}
-                bg={msg.sender === "user" ? "blue.100" : "gray.100"}
-                borderRadius="md"
-                p={2}
-                maxWidth="80%"
-              >
-                <Text>{msg.message}</Text>
-                {msg.loadingImage && <Spinner />}
-                {!msg.loadingImage && msg.image && (
-                  <Image src={msg.image} alt="chat image" />
-                )}
-              </Box>
-            </Flex>
-          ))}
-          <div ref={props.messageEndRef}></div>
-        </VStack>
+              <Text>{msg.message}</Text>
+              {msg.loadingImage && (
+                <HStack>
+                  <Spinner size="sm" />
+                  <Text>이미지가 생성 중...</Text>
+                </HStack>
+              )}
+              {!msg.loadingImage && msg.image && (
+                <Image src={msg.image} alt="생성된 이미지" mt={2} />
+              )}
+            </Box>
+          </Flex>
+        ))}
+        <div ref={props.messageEndRef}></div>
+      </VStack>
 
         {/* Input Area */}
         <Flex p={4} bg="gray.100">
