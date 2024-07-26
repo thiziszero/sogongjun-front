@@ -4,7 +4,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import { useAppContext } from "../../AppContext";
 import HomePresentation from "./HomePresentation";
 import { userApi, questionApi, nftApi } from "../../Apis/apis";
-import { QuestionRequest, AnswerToImageRequest } from "../../Interfaces/request";
+import { QuestionRequest, AnswerToImageRequest, CreateNFTRequest } from "../../Interfaces/request";
 import { Message } from "../../Interfaces/interface";
 
 const HomeContainer: React.FC = () => {
@@ -106,36 +106,37 @@ const HomeContainer: React.FC = () => {
       onLoginModalOpen();
       return;
     }
-
+  
     if (inputValue.trim()) {
       setChatHistory((prev) => [
         ...prev,
         { id: prev.length + 1, message: inputValue, sender: "user" },
       ]);
       setInputValue("");
-
+  
       try {
-        const request: QuestionRequest = { content: inputValue };
-        const response = await questionApi.askQuestion(request);
-
-        const questionId = response.data.questionId;
-        const answerText = response.data.answer.text;
-
-        // Step 2: Convert the answer to image using the questionId
+        // Step 1: Ask the question and get the questionId and answer text
+        const questionRequest: QuestionRequest = { content: inputValue };
+        const questionResponse = await questionApi.askQuestion(questionRequest);
+        const { questionId, answer } = questionResponse.data;
+  
+        // Step 2: Convert the answer to image using the questionId and answer text
         const answerToImageRequest: AnswerToImageRequest = {
           questionId,
-          answerText
+          answerText: answer.text,
         };
-        const answerToImageResponse = await questionApi.convertAnswerToImage(answerToImageRequest); // { questionId, img url }
-
+        const answerToImageResponse = await questionApi.convertAnswerToImage(answerToImageRequest);
+  
+        // Prepare the new messages with the answer text
         const newMessages: Message[] = [
           {
             id: chatHistory.length + 2,
-            message: response.data.answer.text,
+            message: answer.text,
             sender: "bot",
           },
         ];
-
+  
+        // If an image is generated, add it to the messages
         if (answerToImageResponse.data.image) {
           newMessages.push({
             id: chatHistory.length + 3,
@@ -144,16 +145,19 @@ const HomeContainer: React.FC = () => {
             sender: "bot",
           });
         }
-
-        const nftResponse = await nftApi.createNFT({
-          questionId: response.data.questionId,
+  
+        // Step 3: Create NFT using the questionId, question content, answer content, and image URL
+        const createNFTRequest: CreateNFTRequest = {
+          questionId,
           questionContent: inputValue,
-          answerContent: response.data.answer.text,
+          answerContent: answer.text,
           nationality: "KR",
           grade: 1,
           imageUrl: answerToImageResponse.data.image || "",
-        });
-
+        };
+        const nftResponse = await nftApi.createNFT(createNFTRequest);
+  
+        // If NFT is successfully created, display the tokenId
         if (nftResponse.data.nft) {
           newMessages.push({
             id: chatHistory.length + 4,
@@ -161,7 +165,8 @@ const HomeContainer: React.FC = () => {
             sender: "bot",
           });
         }
-
+  
+        // Update the chat history with the new messages
         setChatHistory((prev) => [...prev, ...newMessages]);
       } catch (error) {
         console.error("API 호출 오류:", error);
