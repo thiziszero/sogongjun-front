@@ -35,6 +35,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     };
 
     initializeAuth();
+
+    const handleBeforeUnload = () => {
+      setIsLoggedIn(false);
+      setUserId(null);
+      setAccessToken(null);
+      localStorage.removeItem("token");
+      localStorage.removeItem("id");
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
   }, []);
 
   const logout = () => {
@@ -44,6 +59,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     localStorage.removeItem("token");
     localStorage.removeItem("id");
   };
+
+  useEffect(() => {
+    // 로그인 상태가 변경될 때마다 로컬 스토리지에 저장
+    if (isLoggedIn) {
+      localStorage.setItem("token", accessToken!);
+      localStorage.setItem("id", userId!);
+    } else {
+      localStorage.removeItem("token");
+      localStorage.removeItem("id");
+    }
+  }, [isLoggedIn, accessToken, userId]);
 
   return (
     <AppContext.Provider value={{
