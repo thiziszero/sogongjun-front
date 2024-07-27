@@ -68,19 +68,21 @@ const Sidebar: React.FC<{
             <Text as="b">전시회</Text>
           </HStack>
         </Button>
+        <Divider />
         <Button variant="ghost" onClick={onBack}>
           <HStack>
             <Icon as={RiQuestionAnswerLine} />
             <Text as="b">질문하기</Text>
           </HStack>
         </Button>
+        <Divider />
+        <Spacer />
         <Button variant="ghost" onClick={onLogout}>
           <HStack>
             <Icon as={TbLogout} />
             <Text as="b">로그아웃</Text>
           </HStack>
         </Button>
-        <Spacer />
         <Button onClick={onClose}>닫기</Button>
       </VStack>
     </Box>

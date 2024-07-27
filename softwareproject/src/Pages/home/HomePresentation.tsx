@@ -31,6 +31,7 @@ import { RiProfileLine, RiQuestionAnswerLine } from "react-icons/ri";
 import { TbLogout } from "react-icons/tb";
 import { BiLogIn } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
+import { GiHamburgerMenu } from "react-icons/gi";
 
 interface Message {
   id: number;
@@ -115,6 +116,7 @@ const Sidebar: React.FC<{
             <Text as="b">전시회</Text>
           </HStack>
         </Button>
+        <Divider />
         {isLoggedIn && (
           <Button variant="ghost" onClick={onClickMypage}>
             <HStack>
@@ -123,22 +125,23 @@ const Sidebar: React.FC<{
             </HStack>
           </Button>
         )}
+        <Divider />
+        <Spacer />
         {isLoggedIn ? (
-          <Button variant="ghost" onClick={onLogout}>
+          <Button onClick={onLogout}>
             <HStack>
               <Icon as={TbLogout} />
               <Text as="b">로그아웃</Text>
             </HStack>
           </Button>
         ) : (
-          <Button variant="ghost" onClick={onLoginModalOpen}>
+          <Button onClick={onLoginModalOpen}>
             <HStack>
               <Icon as={BiLogIn} />
               <Text as="b">로그인</Text>
             </HStack>
           </Button>
         )}
-        <Spacer />
         <Button onClick={onClose}>닫기</Button>
       </VStack>
     </Box>
@@ -183,7 +186,7 @@ const HomePresentation: React.FC<HomePresentationProps> = (props) => {
           shadow="md"
         >
           <Button onClick={props.onToggleSidebar} mr={3} variant="outline">
-            ☰
+          <GiHamburgerMenu />
           </Button>
           <Heading size="md">MultiLearn</Heading>
           <Spacer />
@@ -252,7 +255,7 @@ const HomePresentation: React.FC<HomePresentationProps> = (props) => {
             mr={2}
             onKeyPress={handleKeyPress}
           />
-          <Button onClick={props.onSendMessage}>
+          <Button variant={"outline"} onClick={props.onSendMessage} ml={2}>
             <HStack>
               <Text as={"b"}>전송</Text>
               <RiQuestionAnswerLine />

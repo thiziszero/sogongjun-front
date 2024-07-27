@@ -19,6 +19,7 @@ import {
   ModalCloseButton,
   Button,
   Input,
+  Icon,
   FormControl,
   FormLabel,
   FormErrorMessage,
@@ -30,7 +31,9 @@ import {
 import { NFTListResponse, NFTData } from "../../Interfaces/response";
 import LoadingPresentation from "../../Components/Loading";
 import KeywordChart from "../../Components/KeywordChart";
-import FilteredNFTGrid from "../../Components/GridComponent";
+import { RiProfileLine, RiQuestionAnswerLine } from "react-icons/ri";
+import { TbLogout } from "react-icons/tb";
+import { BiLogIn } from "react-icons/bi";
 
 interface FairPresentationProps {
   nfts: NFTListResponse["nfts"];
@@ -85,18 +88,29 @@ const FairPresentation = (props: FairPresentationProps) => (
         zIndex={1}
         boxShadow="md"
       >
-        <Heading size="md" onClick={props.onBack}>
-          MultiLearn 전시회
-        </Heading>
+        <Button onClick={props.onBack}>
+          <Heading size="md">MultiLearn 전시회</Heading>
+        </Button>
         <Spacer />
-        <Button onClick={props.onBack}>질문하기</Button>
+        <Button onClick={props.onBack}>
+          <HStack>
+            <Icon as={RiQuestionAnswerLine} />
+            <Text as="b">질문하기</Text>
+          </HStack>
+        </Button>
         {props.isLoggedIn ? (
           <Button ml="auto" onClick={props.onLogout}>
-            로그아웃
+            <HStack>
+              <Icon as={TbLogout} />
+              <Text as="b">로그아웃</Text>
+            </HStack>
           </Button>
         ) : (
           <Button ml="auto" onClick={props.onLoginModalOpen}>
-            로그인
+            <HStack>
+              <Icon as={BiLogIn} />
+              <Text as="b">로그인</Text>
+            </HStack>
           </Button>
         )}
       </Flex>
@@ -145,7 +159,7 @@ const FairPresentation = (props: FairPresentationProps) => (
             {props.popularNFTs && props.popularNFTs.length > 0 ? (
               <KeywordChart data={props.popularNFTs} />
             ) : (
-              <Text>인기 NFT 데이터가 없습니다.</Text>
+              <Text as={"b"}>인기 키워드가 없습니다.</Text>
             )}
             <Box textAlign={"center"}>
               <br></br>
