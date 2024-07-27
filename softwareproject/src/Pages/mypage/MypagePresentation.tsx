@@ -1,3 +1,4 @@
+// MypagePresentation.tsx
 import React from "react";
 import {
   Box,
@@ -6,17 +7,27 @@ import {
   Text,
   Flex,
   Spacer,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
   VStack,
   HStack,
   useColorModeValue,
   Icon,
   Divider,
+  Grid,
+  Image,
 } from "@chakra-ui/react";
 import { FiUser, FiBook, FiFlag } from "react-icons/fi";
 import { IoNavigate } from "react-icons/io5";
 import { RiProfileLine, RiQuestionAnswerLine } from "react-icons/ri";
 import { TbLogout } from "react-icons/tb";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { NFTListResponse } from "../../Interfaces/response";
 
 interface MypagePresentationProps {
   userId: string | null;
@@ -27,6 +38,11 @@ interface MypagePresentationProps {
   isSidebarOpen: boolean;
   onToggleSidebar: () => void;
   onBack: () => void;
+  nfts: any[];
+  selectedNft: NFTListResponse["nfts"][0] | null;
+  isModalOpen: boolean;
+  onNftClick: (nft: NFTListResponse["nfts"][0]) => void;
+  onCloseModal: () => void;
 }
 
 const Sidebar: React.FC<{
@@ -122,7 +138,7 @@ const MypagePresentation: React.FC<MypagePresentationProps> = (props) => {
         >
           <Flex align="center">
             <Button onClick={props.onToggleSidebar} variant="outline" mr={3}>
-            <GiHamburgerMenu />
+              <GiHamburgerMenu />
             </Button>
             <Heading size="lg">마이페이지</Heading>
           </Flex>
@@ -183,6 +199,106 @@ const MypagePresentation: React.FC<MypagePresentationProps> = (props) => {
             </VStack>
           </Box>
         </Box>
+
+        {/* NFT Listing Section */}
+        <Box maxWidth="800px" margin="auto" mt={8} p={4}>
+          <Box
+            bg={cardBgColor}
+            borderRadius="lg"
+            borderWidth="1px"
+            borderColor={borderColor}
+            p={6}
+            boxShadow="sm"
+          >
+            <VStack align="stretch" spacing={4}>
+              <Heading size="md">내 NFT 목록 (예정)</Heading>
+              <Grid
+                templateColumns="repeat(4, 1fr)"
+                gap={6}
+              >
+                {props.nfts.map((nft) => (
+                  <Box
+                    key={nft.tokenId}
+                    borderWidth={1}
+                    borderRadius="lg"
+                    overflow="hidden"
+                    cursor="pointer"
+                    onClick={() => props.onNftClick(nft)}
+                  >
+                    <Image
+                      src={nft.imageUrl}
+                      alt={nft.questionContent}
+                      objectFit="cover"
+                      w="100%"
+                      h="200px"
+                    />
+                    <Box p={4}>
+                      <Text fontWeight="bold" noOfLines={2} textAlign="left">
+                        {nft.questionContent}
+                      </Text>
+                      <Text fontSize="sm" color="gray.500">
+                        학년: {nft.grade}
+                      </Text>
+                      <Text fontSize="sm" color="gray.500">
+                        국적: {nft.nationality}
+                      </Text>
+                      <Text fontSize="sm" color="gray.500">
+                        Token ID: {nft.tokenId}
+                      </Text>
+                    </Box>
+                  </Box>
+                ))}
+              </Grid>
+            </VStack>
+          </Box>
+        </Box>
+
+        {/* NFT Detail Modal */}
+        <Modal
+          isOpen={props.isModalOpen}
+          onClose={props.onCloseModal}
+          size="xl"
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>NFT 상세 정보</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              {props.selectedNft && (
+                <Flex>
+                  <Box flex={1}>
+                    <Image
+                      src={props.selectedNft.imageUrl}
+                      alt={props.selectedNft.questionContent}
+                    />
+                  </Box>
+                  <Box flex={1} ml={4}>
+                    <VStack align="start" spacing={3}>
+                      <Text fontWeight="bold">질문 내용:</Text>
+                      <Text>{props.selectedNft.questionContent}</Text>
+                      <Text fontWeight="bold">답변 내용:</Text>
+                      <Text>{props.selectedNft.answerContent}</Text>
+                      <Text fontWeight="bold">
+                        학년: {props.selectedNft.grade}
+                      </Text>
+                      <Text fontWeight="bold">
+                        국적: {props.selectedNft.nationality}
+                      </Text>
+                      <Text fontWeight="bold">
+                        Token ID: {props.selectedNft.tokenId}
+                      </Text>
+                    </VStack>
+                  </Box>
+                </Flex>
+              )}
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={props.onCloseModal}>
+                닫기
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Flex>
     </Box>
   );

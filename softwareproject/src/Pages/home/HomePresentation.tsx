@@ -32,6 +32,7 @@ import { TbLogout } from "react-icons/tb";
 import { BiLogIn } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { GoDependabot } from "react-icons/go";
 
 interface Message {
   id: number;
@@ -186,7 +187,7 @@ const HomePresentation: React.FC<HomePresentationProps> = (props) => {
           shadow="md"
         >
           <Button onClick={props.onToggleSidebar} mr={3} variant="outline">
-          <GiHamburgerMenu />
+            <GiHamburgerMenu />
           </Button>
           <Heading size="md">MultiLearn</Heading>
           <Spacer />
@@ -223,6 +224,11 @@ const HomePresentation: React.FC<HomePresentationProps> = (props) => {
               key={msg.id}
               justifyContent={msg.sender === "user" ? "flex-end" : "flex-start"}
             >
+              {msg.sender !== "user" && (
+                <Box alignSelf="center" mr={2}>
+                  <GoDependabot />
+                </Box>
+              )}
               <Box
                 alignSelf={msg.sender === "user" ? "flex-end" : "flex-start"}
                 bg={msg.sender === "user" ? "blue.100" : "gray.100"}
@@ -241,6 +247,11 @@ const HomePresentation: React.FC<HomePresentationProps> = (props) => {
                   <Image src={msg.image} alt="생성된 이미지" mt={2} />
                 )}
               </Box>
+              {msg.sender === "user" && (
+                <Box alignSelf="center" ml={2}>
+                  <CgProfile />
+                </Box>
+              )}
             </Flex>
           ))}
           <div ref={props.messageEndRef}></div>
