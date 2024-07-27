@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Center,
+  Divider,
   Flex,
   Heading,
   Input,
@@ -20,9 +21,16 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
+  useColorModeValue,
+  Icon,
   Image,
   Spacer,
 } from "@chakra-ui/react";
+import { IoNavigate } from "react-icons/io5";
+import { RiProfileLine, RiQuestionAnswerLine } from "react-icons/ri";
+import { TbLogout } from "react-icons/tb";
+import { BiLogIn } from "react-icons/bi";
+import { CgProfile } from "react-icons/cg";
 
 interface Message {
   id: number;
@@ -91,24 +99,43 @@ const Sidebar: React.FC<{
     >
       <VStack align="stretch" p={4} spacing={4} height="100%">
         <Flex justifyContent="flex-end" alignItems="center">
-          <Heading size="md">Navigator</Heading>
+          <HStack>
+            <Heading size="md">Navigate</Heading>
+            <Icon as={IoNavigate} />
+          </HStack>
           <Spacer />
           <Button onClick={onClose} variant="ghost" size="sm">
             ✕
           </Button>
         </Flex>
-        <br></br>
+        <Divider />
         <Button variant="ghost" onClick={onClickFair}>
-          전시회
+          <HStack>
+            <Icon as={RiProfileLine} />
+            <Text as="b">전시회</Text>
+          </HStack>
         </Button>
-        {isLoggedIn && <Button variant="ghost" onClick={onClickMypage}>마이페이지</Button>}
+        {isLoggedIn && (
+          <Button variant="ghost" onClick={onClickMypage}>
+            <HStack>
+              <Icon as={CgProfile} />
+              <Text as="b">마이페이지</Text>
+            </HStack>
+          </Button>
+        )}
         {isLoggedIn ? (
           <Button variant="ghost" onClick={onLogout}>
-            로그아웃
+            <HStack>
+              <Icon as={TbLogout} />
+              <Text as="b">로그아웃</Text>
+            </HStack>
           </Button>
         ) : (
           <Button variant="ghost" onClick={onLoginModalOpen}>
-            로그인
+            <HStack>
+              <Icon as={BiLogIn} />
+              <Text as="b">로그인</Text>
+            </HStack>
           </Button>
         )}
         <Spacer />
@@ -119,6 +146,7 @@ const Sidebar: React.FC<{
 };
 
 const HomePresentation: React.FC<HomePresentationProps> = (props) => {
+  const cardBgColor = useColorModeValue("gray.100", "gray.700");
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       props.onSendMessage();
@@ -143,23 +171,34 @@ const HomePresentation: React.FC<HomePresentationProps> = (props) => {
         transition="margin-left 0.3s"
       >
         {/* Header */}
-        <Flex p={4} bg="gray.100" alignItems="center">
-          <Button
-            onClick={props.onToggleSidebar}
-            mr={2}
-            variant="ghost"
-            size="sm"
-          >
+        <Flex
+          p={4}
+          as="header"
+          align="center"
+          justify="space-between"
+          wrap="wrap"
+          padding="1.5rem"
+          bg={cardBgColor}
+          color="gray.800"
+          shadow="md"
+        >
+          <Button onClick={props.onToggleSidebar} mr={3} variant="outline">
             ☰
           </Button>
-          <Heading size="md">MultiLearn❤️</Heading>
+          <Heading size="md">MultiLearn</Heading>
           <Spacer />
-          <Button variant="ghost" onClick={props.onClickFair}>
-            전시회
+          <Button mr={3} variant="outline" onClick={props.onClickFair}>
+            <HStack>
+              <Icon as={RiProfileLine} />
+              <Text as="b">전시회</Text>
+            </HStack>
           </Button>
           {props.isLoggedIn ? (
-            <Button ml="auto" onClick={props.onLogout}>
-              로그아웃
+            <Button ml="auto" colorScheme="red" onClick={props.onLogout}>
+              <HStack>
+                <Icon as={TbLogout} />
+                <Text as="b">로그아웃</Text>
+              </HStack>
             </Button>
           ) : (
             <Button ml="auto" onClick={props.onLoginModalOpen}>
@@ -170,39 +209,39 @@ const HomePresentation: React.FC<HomePresentationProps> = (props) => {
 
         {/* Chat Area */}
         <VStack
-        flex={1}
-        overflowY="auto"
-        p={4}
-        spacing={4}
-        alignItems="stretch"
-      >
-        {props.chatHistory.map((msg) => (
-          <Flex
-            key={msg.id}
-            justifyContent={msg.sender === "user" ? "flex-end" : "flex-start"}
-          >
-            <Box
-              alignSelf={msg.sender === "user" ? "flex-end" : "flex-start"}
-              bg={msg.sender === "user" ? "blue.100" : "gray.100"}
-              borderRadius="md"
-              p={2}
-              maxWidth="80%"
+          flex={1}
+          overflowY="auto"
+          p={4}
+          spacing={4}
+          alignItems="stretch"
+        >
+          {props.chatHistory.map((msg) => (
+            <Flex
+              key={msg.id}
+              justifyContent={msg.sender === "user" ? "flex-end" : "flex-start"}
             >
-              <Text>{msg.message}</Text>
-              {msg.loadingImage && (
-                <HStack>
-                  <Spinner size="sm" />
-                  <Text>이미지가 생성 중...</Text>
-                </HStack>
-              )}
-              {!msg.loadingImage && msg.image && (
-                <Image src={msg.image} alt="생성된 이미지" mt={2} />
-              )}
-            </Box>
-          </Flex>
-        ))}
-        <div ref={props.messageEndRef}></div>
-      </VStack>
+              <Box
+                alignSelf={msg.sender === "user" ? "flex-end" : "flex-start"}
+                bg={msg.sender === "user" ? "blue.100" : "gray.100"}
+                borderRadius="md"
+                p={2}
+                maxWidth="80%"
+              >
+                <Text>{msg.message}</Text>
+                {msg.loadingImage && (
+                  <HStack>
+                    <Spinner size="sm" />
+                    <Text>이미지가 생성 중...</Text>
+                  </HStack>
+                )}
+                {!msg.loadingImage && msg.image && (
+                  <Image src={msg.image} alt="생성된 이미지" mt={2} />
+                )}
+              </Box>
+            </Flex>
+          ))}
+          <div ref={props.messageEndRef}></div>
+        </VStack>
 
         {/* Input Area */}
         <Flex p={4} bg="gray.100">
@@ -213,7 +252,12 @@ const HomePresentation: React.FC<HomePresentationProps> = (props) => {
             mr={2}
             onKeyPress={handleKeyPress}
           />
-          <Button onClick={props.onSendMessage}>전송</Button>
+          <Button onClick={props.onSendMessage}>
+            <HStack>
+              <Text as={"b"}>전송</Text>
+              <RiQuestionAnswerLine />
+            </HStack>
+          </Button>
         </Flex>
 
         {/* Login Modal */}

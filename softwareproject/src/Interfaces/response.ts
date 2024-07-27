@@ -5,6 +5,9 @@ export interface RegisterResponse {
 export interface LoginResponse {
     message: string;
     token: string;
+    nickname: string;
+    nationality: string;
+    grade: number;
 }
 
 export interface QuestionResponse {

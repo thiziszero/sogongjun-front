@@ -46,6 +46,8 @@ const HomeContainer: React.FC = () => {
         context.setIsLoggedIn(true);
         context.setUserId(id);
         context.setAccessToken(response.data.token);
+        context.setGrade(response.data.grade);
+        context.setNationality(response.data.nationality);
         onLoginModalClose();
         alert("로그인 성공");
       } catch (error) {
