@@ -28,22 +28,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   useEffect(() => {
     const initializeAuth = () => {
-      const storedToken = localStorage.getItem("token");
-      const storedUserId = localStorage.getItem("id");
-      const storedGrade = localStorage.getItem("grade");
-      const storedNationality = localStorage.getItem("nationality");
+      const storedToken = sessionStorage.getItem("token");
+      const storedUserId = sessionStorage.getItem("id");
+      const storedGrade = sessionStorage.getItem("grade");
+      const storedNationality = sessionStorage.getItem("nationality");
 
-      if (storedToken && storedUserId) {
+      if (storedToken && storedUserId && storedGrade && storedNationality) {
         setAccessToken(storedToken);
         setUserId(storedUserId);
+        setGrade(parseInt(storedGrade));
+        setNationality(storedNationality);
         setIsLoggedIn(true);
-      }
-
-      if(grade === -1 ){
-        setIsLoggedIn(false);
-      }
-      if(nationality===null){
-        setIsLoggedIn(false);
       }
 
       setLoading(false);
@@ -97,43 +92,35 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setAccessToken(null);
     setGrade(-1);
     setNationality(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("id");
-    localStorage.removeItem("grade");
-    localStorage.removeItem("nationality");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("id");
+    sessionStorage.removeItem("grade");
+    sessionStorage.removeItem("nationality");
     sessionStorage.removeItem('lastActiveTime');
   };
 
   useEffect(() => {
-    // 로그인 상태가 변경될 때마다 로컬 스토리지에 저장
+    // 로그인 상태가 변경될 때마다 세션 스토리지에 저장
     if (isLoggedIn) {
       if (accessToken) {
-        localStorage.setItem("token", accessToken);
+        sessionStorage.setItem("token", accessToken);
       }
       if (userId) {
-        localStorage.setItem("id", userId);
+        sessionStorage.setItem("id", userId);
+      }
+      if (grade !== -1) {
+        sessionStorage.setItem("grade", grade.toString());
+      }
+      if (nationality) {
+        sessionStorage.setItem("nationality", nationality);
       }
     } else {
-      localStorage.removeItem("token");
-      localStorage.removeItem("id");
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("id");
+      sessionStorage.removeItem("grade");
+      sessionStorage.removeItem("nationality");
     }
-  }, [isLoggedIn, accessToken, userId]);
-
-  useEffect(() => {
-    if (grade !== -1) {
-      localStorage.setItem("grade", grade.toString());
-    } else {
-      localStorage.removeItem("grade");
-    }
-  }, [grade]);
-
-  useEffect(() => {
-    if (nationality) {
-      localStorage.setItem("nationality", nationality);
-    } else {
-      localStorage.removeItem("nationality");
-    }
-  }, [nationality]);
+  }, [isLoggedIn, accessToken, userId, grade, nationality]);
 
   return (
     <AppContext.Provider value={{
