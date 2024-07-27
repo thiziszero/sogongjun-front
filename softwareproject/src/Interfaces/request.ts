@@ -27,7 +27,7 @@ export interface CreateNFTRequest {
     questionId: number;
     questionContent: string;
     answerContent: string;
-    nationality: string;
-    grade: number;
+    nationality: string | null;
+    grade: number | null;
     imageUrl: string;
 }

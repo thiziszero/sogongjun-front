@@ -162,8 +162,8 @@ const HomeContainer: React.FC = () => {
           questionId,
           questionContent: inputValue,
           answerContent: answer.text,
-          nationality: "South Korea",
-          grade: 11,
+          nationality: context.nationality,
+          grade: context.grade,
           imageUrl: answerToImageResponse.data.image || "",
         };
         const nftResponse = await nftApi.createNFT(createNFTRequest);

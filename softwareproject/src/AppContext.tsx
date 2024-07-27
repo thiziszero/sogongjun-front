@@ -39,12 +39,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setIsLoggedIn(true);
       }
 
-      if (storedGrade !== null) {
-        setGrade(parseInt(storedGrade, 10));
+      if(grade === -1 ){
+        setIsLoggedIn(false);
       }
-
-      if (storedNationality !== null) {
-        setNationality(storedNationality);
+      if(nationality===null){
+        setIsLoggedIn(false);
       }
 
       setLoading(false);
