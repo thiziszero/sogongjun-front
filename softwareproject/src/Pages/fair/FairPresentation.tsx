@@ -155,7 +155,7 @@ const FairPresentation = (props: FairPresentationProps) => (
 
         {/* Main Content */}
         <Flex direction={{ base: "column", md: "row" }} justify="space-between">
-          <Box flex={1} p={4} borderWidth={2}>
+          <Box flex={1} p={4} borderWidth={2} maxW="500px" overflow="hidden">
             {props.popularNFTs && props.popularNFTs.length > 0 ? (
               <KeywordChart data={props.popularNFTs} />
             ) : (
@@ -182,8 +182,8 @@ const FairPresentation = (props: FairPresentationProps) => (
                   cursor="pointer"
                   mr={4}
                   minW="250px"
-                  onClick={() => props.onPopularNftClick(nft)}
                   maxW="500px"
+                  onClick={() => props.onPopularNftClick(nft)}
                 >
                   <Image
                     src={nft.nftDetails.image}
